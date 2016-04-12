@@ -1,0 +1,31 @@
+{
+  "project": "Dockbot",
+  "url": "https://github.com/CauldronDevelopmentLLC/dockbot",
+  "namespace": "dockbot",
+  "admin": "Joseph Coffland <jcoffland@cauldrondevelopment.com>",
+  "ip": "127.0.0.1",
+  "http-port": 8049,
+  "buildbot-port": 8050,
+
+  "modes": {
+    "debug": {"scons": {"debug": 1}},
+    "release": {}
+  },
+
+  "context": [],
+
+  "projects": {
+    "_default_": {
+      "compile": ["scons", "-k"]
+    },
+
+    "cbang": {
+      "test": true,
+      "repo": {
+        "type": "git",
+        "url": "https://github.com/CauldronDevelopmentLLC/cbang",
+        "branch": "master"
+      }
+    }
+  }
+}

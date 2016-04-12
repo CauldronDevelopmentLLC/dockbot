@@ -1,0 +1,27 @@
+FROM debian:testing
+MAINTAINER joseph@cauldrondevelopment.com
+
+# Install prerequisites
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends git python-twisted-core procps\
+    debian-keyring debian-archive-keyring ca-certificates rsync make nginx \
+    python-twisted-web less
+
+include(buildbot.m4)
+
+ENV BUILDMASTER_BUILDS /host/builds
+
+COPY nginx.conf /etc/nginx/sites-enabled/default
+
+EXPOSE 9989 80
+
+WORKDIR /host
+
+ENTRYPOINT \
+  mkdir -m 777 -p $BUILDMASTER_BUILDS && \
+  rm -f twistd.pid github-hook.pid && \
+  twistd --pidfile github-hook.pid web --port 8080 -l - \
+    --wsgi=github-hook.app && \
+  service nginx start && \
+  twistd -l - -y master.tac && \
+  tail -f twistd.log

@@ -1,0 +1,3 @@
+ENV BOOST_VERSION 1.59.0
+ENV BOOST_SOURCE=$HOME/boost_1_59_0
+include(boost.m4)
