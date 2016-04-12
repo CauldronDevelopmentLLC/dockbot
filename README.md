@@ -175,7 +175,7 @@ This command first deletes the old build than builds it again applying any
 configuration changes.  In order to do a rebuild all of the images's containers
 must first be stopped.
 
-# Starting running build master
+# Starting & running the build master
 The build master is a special docker container which coordinates the builds.
 Like the slaves it too must be built and run.  This is accomplished as follows:
 
