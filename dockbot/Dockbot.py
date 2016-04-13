@@ -23,6 +23,13 @@ def gen_password():
     return passwd
 
 
+def call(cmd, instance):
+    try:
+        getattr(instance, cmd)()
+    except AttributeError:
+        raise dockbot.Error('Invalid command "%s"' % cmd)
+
+
 
 class Dockbot(object):
     def __init__(self, args, conf_file):
@@ -50,22 +57,16 @@ class Dockbot(object):
         if 'passwd' not in self.conf:
             self.conf['passwd'] = gen_password()
 
-        # Run command
-        try:
-            cmd_func = getattr(dockbot.Image, args.cmd)
-        except AttributeError:
-            raise dockbot.Error('Invalid command "%s"' % args.cmd)
-
-        # Single image/container or all
-        if args.name is None: map(cmd_func, self.images)
-        elif args.name == 'master': cmd_func(master)
+        # Run command in single image/container or all
+        if args.name is None: map(lambda x: call(args.cmd, x), self.images)
+        elif args.name == 'master': call(args.cmd, master)
         else:
             instance = self.find_instance(args.name)
             if instance is None:
                 raise dockbot.Error('Invalid image or container "%s"' %
                                    args.name)
 
-            cmd_func(instance)
+            call(args.cmd, instance)
 
 
     def load_slaves(self, slave_root):
