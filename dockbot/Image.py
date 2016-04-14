@@ -33,6 +33,8 @@ class Image(object):
     def __eq__(self, other): return self.name == other.name
     def __ne__(self, other): return not self.__eq__(other)
 
+    def kind(self): return 'Image'
+
 
     def is_running(self):
         for container in self.containers:
@@ -44,12 +46,12 @@ class Image(object):
         return dockbot.inspect(self.qname) != dockbot.NOT_FOUND
 
 
-    def delete(self):
+    def cmd_delete(self):
         if self.exists():
             dockbot.status_line(self.qname, *dockbot.DELETING)
 
             for container in self.containers:
-                container.delete()
+                container.cmd_delete()
 
             dockbot.system(['docker', 'rmi', '--no-prune', self.qname], True,
                            'remove image')
@@ -61,39 +63,39 @@ class Image(object):
         return False
 
 
-    def status(self):
+    def cmd_status(self):
         for container in self.containers:
-            container.status()
+            container.cmd_status()
 
 
-    def config(self):
+    def cmd_config(self):
         for container in self.containers:
-            container.config()
+            container.cmd_config()
 
 
-    def shell(self):
+    def cmd_shell(self):
         for container in self.containers:
-            container.shell()
+            container.cmd_shell()
             return
         raise dockbot.Error('Cannot open shell in image')
 
 
-    def start(self):
+    def cmd_start(self):
         for container in self.containers:
-            container.start()
+            container.cmd_start()
 
 
-    def stop(self):
+    def cmd_stop(self):
         for container in self.containers:
-            container.stop()
+            container.cmd_stop()
 
 
-    def restart(self):
-        self.stop()
-        self.start()
+    def cmd_restart(self):
+        self.cmd_stop()
+        self.cmd_start()
 
 
-    def build(self):
+    def cmd_build(self):
         # Check if continer already exists
         if self.exists(): return
 
@@ -141,13 +143,13 @@ class Image(object):
 
 
 
-    def rebuild(self):
+    def cmd_rebuild(self):
         # Check if image is running
         if self.is_running():
             raise dockbot.Error('Cannot rebuild while container is running')
 
         # Delete image if it exists
-        self.delete()
+        self.cmd_delete()
 
         # Build
-        self.build()
+        self.cmd_build()

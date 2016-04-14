@@ -6,6 +6,7 @@ passwd
 /run
 /builds/*
 /releases/*
+/dist
 
 *.pyc
 *.egg-info

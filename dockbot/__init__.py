@@ -32,14 +32,16 @@ A tool for running a Buildbot master and set of slaves under Docker.
 '''
 
 cmd_help = '''
-status     Print status then exit.
-config     Print the instance config(s).
-shell      Run shell in instance.
-start      Start docker instance(s).
-stop       Stop docker instance(s).
-restart    Start then stop docker instance(s).
-build      Build image(s).
-rebuild    Rebuild image(s) from scratch.
+status               Print status then exit.
+config               Print the instance config(s).
+shell                Run shell in instance.
+start                Start docker instance(s).
+stop                 Stop docker instance(s).
+restart              Start then stop docker instance(s).
+build                Build image(s).
+rebuild              Rebuild image(s) from scratch.
+delete               Delete an image or container.
+trigger [PROJECT]    Trigger one or all builds on a running slave container.
 
 '''
 
@@ -56,6 +58,8 @@ def run():
     parser.add_argument('name', metavar = 'NAME', nargs = '?',
                         help = 'Docker instance or container to operate on.  ' +
                         'Either "master" or one of the slave names.')
+    parser.add_argument('project', metavar = 'PROJECT', nargs = '?',
+                        help = 'A project name.')
     parser.add_argument('args', metavar = 'ARGS', nargs = '*',
                         help = 'Extra arguments to pass on to Docker')
     parser.add_argument('--slaves', metavar = 'DIR', default = 'slaves',

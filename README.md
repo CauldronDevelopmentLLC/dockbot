@@ -1,4 +1,4 @@
-# dockbot
+# Dockbot
 A continuous integration system which uses Docker and Buildbot.  Dockbot is a
 Python program which starts a **master** Docker instance and a number of
 build **slaves**.  The **master** coordinates builds, offers a Web interface
@@ -7,13 +7,17 @@ to source repositories.  The **slaves** perform the builds under different
 configurations.
 
 # Installation
-You can install dockbot as follows:
+You can install dockbot with pip as follows:
+
+    pip install dockbot
+
+Or from GitHub:
 
     git clone https://github.com/CauldronDevelopmentLLC/dockbot
     cd dockbot
     sudo python setup.py install
 
-# Overview
+# Configuring a Dockbot Project
 To use dockbot you need to create a ``dockbot.json`` configuration file in a
 directory of it's own and a number of **slaves** in a directory called
 ``slaves``.  In the slave directories you also have ``dockbot.json`` files
@@ -36,7 +40,7 @@ should look like this:
 The optional ``lib`` directory can contain Docker file fragments which may be
 used by multiple slaves.
 
-# Basic configuration
+## Basic configuration
 The top level ``dockbot.json`` file needs a some basic configuration
 information to setup the dockbot install:
 
@@ -61,7 +65,7 @@ These configuration values have the following meanings:
  * buildbot-port - Opening this port allows other build slaves to connect.
 
 
-# Build modes
+## Build modes
 Often software can be built in more than one way.  Build modes make it possible
 to configure different builds configurations for the same software.  Build mode
 configuration looks like this:
@@ -77,7 +81,7 @@ Above we configure two build modes ``debug`` and ``release``.  The names are
 arbitrary and can be anything you like.  The dictionaries under these names
 override options specific to those moves.
 
-# Projects
+## Projects
 ```
 "projects": {
   "_default_": {
@@ -112,13 +116,13 @@ Project names are arbitrary and may contain the following configuration options:
   * packages - A list of package types, appended to the compile command.
   * build - If false the build step is omitted.
 
-# Slaves
+## Slaves
 A slave represents a particular build configuration.  Each slave has its own
 directory under ``slaves``.  The ``dockbot.json`` file in this directory defines
 one or more images that will be built and adds any extra configuration options
 particular to the slave.
 
-# Slave images
+## Slave Images
 A slave image is a Docker image which will be run in one or more **modes**.
 Images are defined in the slave's ``dockbot.json`` as follows:
 
@@ -158,7 +162,7 @@ include(debian-gcc-4.8.m4)
 Each of these ``include()`` lines references a docker file fragment located in
 one of the lib directories.
 
-# Building dockbot images
+# Building Dockbot Images
 To build a dockbot image run the following command:
 
     dockbot build <image>
@@ -175,7 +179,7 @@ This command first deletes the old build than builds it again applying any
 configuration changes.  In order to do a rebuild all of the images's containers
 must first be stopped.
 
-# Starting & running the build master
+# Starting & Running Master
 The build master is a special docker container which coordinates the builds.
 Like the slaves it too must be built and run.  This is accomplished as follows:
 
@@ -187,7 +191,7 @@ changed.  To stop the master run the following:
 
     dockbot stop master
 
-# Dockbot status
+# Dockbot Status
 To view the status of the dockbot containers run the following:
 
     dockbot status
@@ -196,8 +200,20 @@ or simply:
 
     dockbot
 
-This will list the status of all configured dockbot containers.  To check the
-status of a particular dockbot container run:
+This will list the status of all configured dockbot containers.  The full name
+of container in the current dockbot project will be displayed on a line
+with it's current status.  Possible status are:
+
+ * **[Not Found]** - The container's image has not been built yet.
+ * **[Built]** - The image has been built but the container does not yet exist.
+ * **[Running]** - The container is currently running.
+ * **[Offline]** - The container exists but is not currently running.
+ * **[Building]** - The image is currently being built.
+ * **[Starting]** - The container is starting.
+ * **[Stopping]** - The container is stopping.
+ * **[Deleting]** - The image is currently being deleted.
+
+To check the status of a particular dockbot container run:
 
     dockbot status <container>
 
@@ -205,7 +221,7 @@ You can also view the complete configuration of a dockbot container like this:
 
     dockbot config <container>
 
-# Opening a shell in a running instance
+# Shell Access
 Some times it is desirable to login and inspect the contents of a container.
 This is a accomplished with the dockbot ``shell`` command:
 
@@ -215,26 +231,26 @@ If the image was previously built this will open a shell in the container.  If
 the container was already running it will attach a new shell to the running
 container.
 
-# The Web interface
+# The Web Interface
 The build master's Web interface makes it possible to monitor and control
 builds.  To view the Web interface navigate a brower to the IP and port
 specified in the top level ``dockbot.json`` file.  At least the build master
 container must be running.  Some slave containers should also be running to
 make it useful.
 
-# Triggering builds
+# Triggering Builds
 Builds may be manually triggered by opening the build master's Web page in a
 browser and clicking on a project name in the third row, then clicking the
 ``Force Build`` button.  Normally bulids are automatically triggered by changes
 in the source repository.  Source repository change notifications must be
 configured on the repository side.
 
-# Triggering builds from GitHub
+# Triggering Builds from GitHub
 TBD
 
-# Publishing builds
+# Publishing Builds
 The last 5 completed builds are placed in ``run/buildmaster/builds/``.  Once all
 the builds for a particular project are correct they can be published using
 the ``dockbot-publish`` tool.
 
-# Publishing builds to GitHub
+# Publishing Builds to GitHub

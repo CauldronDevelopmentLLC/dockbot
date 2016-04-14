@@ -4,9 +4,10 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'dockbot',
-    version = '0.1',
+    version = '0.1.2',
     description =
     'A continuous integration system which uses Docker and Buildbot',
+    long_description = open('README.md', 'rt').read(),
     author = 'Joseph Coffland',
     author_email = 'joseph@cauldrondevelopment.com',
     platforms = ['any'],
@@ -21,5 +22,6 @@ setup(
             'dockbot-publish = dockbot.publish:run',
             'github-release = dockbot.github:run',
             ]
-        }
+        },
+    install_requires = ['requests'],
     )

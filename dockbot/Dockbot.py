@@ -23,11 +23,15 @@ def gen_password():
     return passwd
 
 
-def call(cmd, instance):
+def command(args, instance):
     try:
-        getattr(instance, cmd)()
+        func = getattr(instance, 'cmd_' + args.cmd)
     except AttributeError:
-        raise dockbot.Error('Invalid command "%s"' % cmd)
+        raise dockbot.Error('Invalid command "%s" for %s.' % (
+                args.cmd, instance.kind()))
+
+    if args.project: func(args.project)
+    else: func()
 
 
 
@@ -58,15 +62,15 @@ class Dockbot(object):
             self.conf['passwd'] = gen_password()
 
         # Run command in single image/container or all
-        if args.name is None: map(lambda x: call(args.cmd, x), self.images)
-        elif args.name == 'master': call(args.cmd, master)
+        if args.name is None: map(lambda x: command(args, x), self.images)
+        elif args.name == 'master': command(args, master)
         else:
             instance = self.find_instance(args.name)
             if instance is None:
                 raise dockbot.Error('Invalid image or container "%s"' %
                                    args.name)
 
-            call(args.cmd, instance)
+            command(args, instance)
 
 
     def load_slaves(self, slave_root):

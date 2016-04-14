@@ -1,0 +1,3 @@
+include LICENSE README.md dockbot.json
+recursive-include data *
+recursive-include slaves *

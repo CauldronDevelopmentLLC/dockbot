@@ -42,32 +42,32 @@ class Container(object):
         return data != dockbot.NOT_FOUND and 'State' in data[0]
 
 
-    def delete(self):
+    def cmd_delete(self):
         if self.exists():
             dockbot.system(['docker', 'rm', self.qname], True,
                            'delete container')
 
 
-    def status(self):
+    def cmd_status(self):
         dockbot.status_line(self.qname, *self.get_status())
 
 
-    def config(self):
+    def cmd_config(self):
         config = {'env': self.env, 'scons': self.scons, 'args': self.args,
                   'ports': self.ports, 'run_dir': self.run_dir}
         print json.dumps(config, indent = 4, separators = (',', ': '))
 
 
-    def shell(self):
+    def cmd_shell(self):
         if self.is_running():
             dockbot.system(['docker', 'exec', '-it', self.qname, 'bash'])
-        else: self.start(True)
+        else: self.cmd_start(True)
 
 
-    def start(self, shell = False):
+    def cmd_start(self, shell = False):
         if self.is_running(): return
         if not self.image.exists(): return
-        self.delete()
+        self.cmd_delete()
 
         dockbot.status_line(self.qname, *dockbot.STARTING)
 
@@ -119,21 +119,21 @@ class Container(object):
         raise Exception('Not implemented')
 
 
-    def stop(self):
+    def cmd_stop(self):
         if self.is_running():
             dockbot.status_line(self.qname, *dockbot.STOPPING)
             dockbot.system(['docker', 'stop', self.qname], True,
                            'stop container')
 
 
-    def restart(self):
-        self.stop()
-        self.start()
+    def cmd_restart(self):
+        self.cmd_stop()
+        self.cmd_start()
 
 
-    def build(self):
+    def cmd_build(self):
         self.image.build()
 
 
-    def rebuild(self):
+    def cmd_rebuild(self):
         self.image.rebuild()

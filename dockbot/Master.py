@@ -13,6 +13,9 @@ c['debugPassword'] = '%(passwd)s'
 
 
 class Master(dockbot.Container):
+    def kind(self): return 'Master'
+
+
     def gen_config(self):
         f = None
         try:
