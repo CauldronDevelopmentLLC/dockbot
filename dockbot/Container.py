@@ -26,10 +26,13 @@ class Container(object):
     def get_status(self):
         data = dockbot.inspect(self.qname)
         if data == dockbot.NOT_FOUND or 'State' not in data[0]:
-            if self.image.exists(): return dockbot.BUILT
+            if self.image.exists():
+                if self.image.is_dirty(): return dockbot.DIRTY
+                else: return dockbot.BUILT
             else: return dockbot.NOT_FOUND
 
         if data[0]['State']['Running']: return dockbot.RUNNING
+        elif self.image.is_dirty(): return dockbot.DIRTY
         else: return dockbot.OFFLINE
 
 
@@ -61,12 +64,23 @@ class Container(object):
     def cmd_shell(self):
         if self.is_running():
             dockbot.system(['docker', 'exec', '-it', self.qname, 'bash'])
+
         else: self.cmd_start(True)
 
 
     def cmd_start(self, shell = False):
-        if self.is_running(): return
-        if not self.image.exists(): return
+        if self.is_running():
+            dockbot.status_line(self.qname, *dockbot.RUNNING)
+            return
+
+        if not self.image.exists():
+            dockbot.status_line(self.qname, *dockbot.NOT_FOUND)
+            return
+
+        if self.image.is_dirty():
+            dockbot.status_line(self.qname, *dockbot.DIRTY)
+            return
+
         self.cmd_delete()
 
         dockbot.status_line(self.qname, *dockbot.STARTING)
@@ -86,7 +100,7 @@ class Container(object):
         cmd = ['docker', 'run', '--name', self.qname,
                '-v', '%s/%s:/host' % (os.getcwd(), self.run_dir)]
 
-        cmd += self.prepare_start()
+        if not shell: cmd += self.prepare_start()
 
         # Environment
         cmd += ['-e', 'CONTAINER_NAME=' + self.name,
@@ -132,8 +146,4 @@ class Container(object):
 
 
     def cmd_build(self):
-        self.image.build()
-
-
-    def cmd_rebuild(self):
-        self.image.rebuild()
+        self.image.cmd_build()

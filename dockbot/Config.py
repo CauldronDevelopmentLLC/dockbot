@@ -13,17 +13,17 @@ def update(d, u):
 
 
 class Config(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, conf):
+        self.conf = conf
 
         self.projects = []
 
-        if 'projects' in config:
-            if '_default_' in config['projects']:
-                default = config['projects']['_default_']
+        if 'projects' in conf:
+            if '_default_' in conf['projects']:
+                default = conf['projects']['_default_']
             else: default = {}
 
-            for name, project in config['projects'].items():
+            for name, project in conf['projects'].items():
                 if name == '_default_': continue
 
                 data = {'name': name}
@@ -34,32 +34,32 @@ class Config(object):
 
 
     def get(self, key, default = None):
-        return self.config.get(key, default)
+        return self.conf.get(key, default)
 
 
     def __contains__(self, key):
-        return self.config.__contains__(key)
+        return self.conf.__contains__(key)
 
 
     def __getitem__(self, key):
-        return self.config.__getitem__(key)
+        return self.conf.__getitem__(key)
 
 
     def __setitem__(self, key, value):
-        self.config.__setitem__(key, value)
+        self.conf.__setitem__(key, value)
 
 
     def enum_by_key(self, key, mode = None):
-        if key in self.config: yield self.config[key]
+        if key in self.conf: yield self.conf[key]
 
-        if 'modes' in self.config and mode in self.config['modes'] and \
-                key in self.config['modes'][mode]:
-            yield self.config['modes'][mode][key]
+        if 'modes' in self.conf and mode in self.conf['modes'] and \
+                key in self.conf['modes'][mode]:
+            yield self.conf['modes'][mode][key]
 
 
     def enum_by_sub_key(self, name, key, mode = None):
-        if name in self.config:
-            for x in Config(self.config[name]).enum_by_key(key, mode):
+        if name in self.conf:
+            for x in Config(self.conf[name]).enum_by_key(key, mode):
                 yield x
 
 
@@ -90,8 +90,8 @@ class Config(object):
         s = set()
         s.add(project)
 
-        if project in self.config['projects']:
-            for dep in self.config['projects'][project].get('deps', []):
+        if project in self.conf['projects']:
+            for dep in self.conf['projects'][project].get('deps', []):
                 s.update(self.get_project_deps(dep))
 
         return s

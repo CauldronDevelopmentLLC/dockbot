@@ -117,9 +117,11 @@ class Master(dockbot.Container):
         self.gen_config()
 
         # Expose ports
-        cmd = ['-p', '%s:%s:80' % (
-                self.conf['ip'], self.conf.get('http-port', 8080)),
-               '-p', '%s:%s:9989' % (
-                self.conf['ip'], self.conf.get('buildbot-port', 9989))]
+        ip = self.conf.get('ip', '127.0.0.1')
+        cmd = ['-p', '%s:%d:80' % (ip, self.conf.get('http-port', 8080))]
+        if 'buildbot-port' in self.conf:
+            cmd += ['-p', '%s:%d:9989' % (ip, self.conf.get('buildbot-port'))]
+        if 'github-port' in self.conf:
+            cmd += ['-p', '%s:%d:8080' % (ip, self.conf.get('github-port'))]
 
         return cmd

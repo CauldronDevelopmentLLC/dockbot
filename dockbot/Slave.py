@@ -23,8 +23,10 @@ class Slave(dockbot.Container):
 
         r = requests.get(url)
         if r.status_code != 200:
-            raise dockbot.Error(
-                'Failed to trigger build, possibly an HTTP proxy problem.')
+            msg = 'Failed to trigger build, possibly an HTTP proxy problem.'
+            if dockbot.args.verbose: msg += '\n' + r.text
+            raise dockbot.Error(msg)
+
 
 
     def prepare_start(self):

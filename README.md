@@ -156,7 +156,7 @@ FROM debian:testing
 include(debian.m4)
 include(boost-1.59.0.m4)
 include(buildbot.m4)
-include(debian-gcc-4.8.m4)
+include(gcc-4.8.m4)
 ```
 
 Each of these ``include()`` lines references a docker file fragment located in
@@ -239,11 +239,12 @@ container must be running.  Some slave containers should also be running to
 make it useful.
 
 # Triggering Builds
-Builds may be manually triggered by opening the build master's Web page in a
-browser and clicking on a project name in the third row, then clicking the
-``Force Build`` button.  Normally bulids are automatically triggered by changes
-in the source repository.  Source repository change notifications must be
-configured on the repository side.
+Builds may be manually triggered using dockbot's ``trigger`` command.  The
+syntax is:
+
+    dockbot trigger <container> [project]
+
+If ``[project]`` is omitted all projects on the slave will be triggered.
 
 # Triggering Builds from GitHub
 TBD
@@ -253,4 +254,7 @@ The last 5 completed builds are placed in ``run/buildmaster/builds/``.  Once all
 the builds for a particular project are correct they can be published using
 the ``dockbot-publish`` tool.
 
+TBD
+
 # Publishing Builds to GitHub
+TBD

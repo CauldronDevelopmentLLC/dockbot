@@ -1,12 +1,4 @@
 {
-  "modes": {
-    "debug": {
-      "scons": {
-        "ccflags": "-Wno-unused-local-typedefs"
-      }
-    }
-  },
-
   "images": {
     "cbang": {"projects": ["cbang"]}
   }

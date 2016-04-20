@@ -24,6 +24,7 @@ STOPPING = ('Stopping', 'red')
 BUILDING = ('Building', 'cyan')
 BUILT = ('Built', 'white')
 DELETING = ('Deleting', 'Red')
+DIRTY = ('Dirty', 'red')
 
 usage = '%(prog)s [OPTIONS] COMMAND [CONTAINER]'
 
@@ -39,7 +40,6 @@ start                Start docker instance(s).
 stop                 Stop docker instance(s).
 restart              Start then stop docker instance(s).
 build                Build image(s).
-rebuild              Rebuild image(s) from scratch.
 delete               Delete an image or container.
 trigger [PROJECT]    Trigger one or all builds on a running slave container.
 
@@ -70,6 +70,8 @@ def run():
                         help = 'Verbose output')
     parser.add_argument('-f', '--foreground', action = 'store_true',
                         help = 'Run in foreground')
+    parser.add_argument('--force', action = 'store_true',
+                        help = 'Run even if container is dirty')
 
     global args
     args = parser.parse_args()

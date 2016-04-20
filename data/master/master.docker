@@ -13,7 +13,7 @@ ENV BUILDMASTER_BUILDS /host/builds
 
 COPY nginx.conf /etc/nginx/sites-enabled/default
 
-EXPOSE 9989 80
+EXPOSE 9989 80 8080
 
 WORKDIR /host
 
