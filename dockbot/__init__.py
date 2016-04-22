@@ -3,7 +3,6 @@ import sys
 
 import dockbot
 
-#__all__ = 'Error Dockbot Config Image Container Slave Master'.split()
 from dockbot.Error import Error
 from dockbot.Dockbot import Dockbot
 from dockbot.Config import Config
@@ -15,6 +14,8 @@ from dockbot.util import *
 
 
 args = {}
+
+CONFIG = 'dockbot.json'
 
 RUNNING = ('Running', 'green')
 OFFLINE = ('Offline', 'blue')
@@ -78,11 +79,15 @@ def run():
     global args
     args = parser.parse_args()
 
-
     try:
-        dockbot.Dockbot(args, 'dockbot.json')
+        if not os.path.exists(CONFIG):
+            raise dockbot.Error(
+                'ERROR: `%s` not found in the current directory.\nMust be '
+                'run in the top-level directory of a dockbot configuration.' %
+                CONFIG)
+
+        dockbot.Dockbot(args, CONFIG)
 
     except dockbot.Error, e:
-        print
-        print e
+        print '\n%s\n' % e
         sys.exit(1)
