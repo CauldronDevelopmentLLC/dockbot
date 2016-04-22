@@ -38,8 +38,8 @@ c['slave_info'] = {}
 c['repo'] = {}
 c['slavePortnum'] = os.environ.get('BUILDBOT_SLAVE_PORT', 9989)
 c['httpPortnum'] = os.environ.get('BUILDBOT_HTTP_PORT', 8010)
-c['buildbotURL'] = '//'
-c['distURL'] = '//builds/'
+c['buildbotURL'] = '/'
+c['distURL'] = '/builds/'
 
 warnPat = "(?!^scons).*: warning( [A-Z]+[0-9]+)?: "
 

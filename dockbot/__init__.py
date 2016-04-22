@@ -72,6 +72,8 @@ def run():
                         help = 'Run in foreground')
     parser.add_argument('--force', action = 'store_true',
                         help = 'Run even if container is dirty')
+    parser.add_argument('-a', '--all', action = 'store_true',
+                        help = 'Perform all prerequisite actions automatically')
 
     global args
     args = parser.parse_args()

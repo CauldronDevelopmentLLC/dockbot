@@ -296,6 +296,8 @@ class OptParser(OptionParser):
 
 
 def run():
+    global options
+
     # Parse command line
     parser = OptParser(option_list = opts, usage = usage, epilog = epilog)
     options, args = parser.parse_args()

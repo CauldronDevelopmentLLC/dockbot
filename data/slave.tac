@@ -5,7 +5,7 @@ from twisted.application import service
 from buildbot.slave.bot import BuildSlave
 
 port = 9989
-host = os.getenv('BUILDMASTER_PORT_9989_TCP_ADDR')
+host = os.getenv('DOCKBOT_NAMESPACE') + '-buildmaster'
 
 basedir = os.getcwd()
 slavename = os.getenv('CONTAINER_NAME')

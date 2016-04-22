@@ -91,11 +91,10 @@ class Image(object):
 
     def cmd_delete(self):
         if self.exists():
-            dockbot.status_line(self.qname, *dockbot.DELETING)
-
             for container in self.containers:
                 container.cmd_delete()
 
+            dockbot.status_line(self.qname, *dockbot.DELETING)
             dockbot.system(['docker', 'rmi', '--no-prune', self.qname], True,
                            'remove image')
 
@@ -117,9 +116,6 @@ class Image(object):
 
 
     def cmd_shell(self):
-        for container in self.containers:
-            container.cmd_shell()
-            return
         raise dockbot.Error('Cannot open shell in image')
 
 
@@ -141,7 +137,8 @@ class Image(object):
     def cmd_build(self):
         # Check if image is running
         if self.is_running():
-            raise dockbot.Error('Cannot rebuild while container is running')
+            raise dockbot.Error('Cannot rebuild image while any of its '
+                                'containers are running')
 
         # Delete image if it exists
         self.cmd_delete()
