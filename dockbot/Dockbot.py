@@ -52,7 +52,7 @@ class Dockbot(object):
                     e, conf_file))
 
         # Master
-        dockerfile = dockbot.get_resource('data/master/master.docker')
+        dockerfile = dockbot.get_resource('dockbot/data/master/master.docker')
         master = dockbot.Image(self, 'buildmaster', dockerfile)
 
         # Find slaves

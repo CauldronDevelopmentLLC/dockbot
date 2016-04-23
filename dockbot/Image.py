@@ -27,7 +27,8 @@ class Image(object):
             for mode in modes:
                 self.containers.append(dockbot.Slave(self, mode))
         else:
-            self.context += [dockbot.get_resource('data/master/nginx.conf')]
+            self.context += [
+                dockbot.get_resource('dockbot/data/master/nginx.conf')]
             self.containers.append(dockbot.Master(self))
 
         self.deps = set()

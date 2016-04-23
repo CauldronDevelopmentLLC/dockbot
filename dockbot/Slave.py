@@ -41,7 +41,7 @@ class Slave(dockbot.Container):
         open(info_dir + '/admin', 'w').write(self.conf['admin'] + '\n')
 
         # Install slave.tac
-        path = dockbot.get_resource('data/slave.tac')
+        path = dockbot.get_resource('dockbot/data/slave.tac')
         dockbot.publish_file(path, self.run_dir)
 
         # Install scons options

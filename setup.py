@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name = 'dockbot',
-    version = '0.1.4',
+    version = '0.1.5',
     description =
     'A continuous integration system which uses Docker and Buildbot',
     long_description = open('README.md', 'rt').read(),
