@@ -75,7 +75,7 @@ class Image(object):
     def gen_dockerfile(self):
         libpath = [os.path.dirname(self.path)]
         libpath += self.conf.get('libpath', ['lib'])
-        libpath += [dockbot.get_resource('data/lib')]
+        libpath += [dockbot.get_resource('dockbot/data/lib')]
 
         cmd = ['m4'] + sum([['-I', x] for x in libpath], []) + [self.path]
         ret, out, err = dockbot.system(cmd, True)
