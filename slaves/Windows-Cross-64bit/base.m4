@@ -75,3 +75,9 @@ RUN ln -sf /usr/bin/wine64 /usr/bin/wine
 
 
 RUN echo "\nalias ls='ls --color'" >> $HOME/.bashrc
+
+# Disable winemenubuilder.exe, services.exe and plugplay.exe
+RUN echo "int main(int argc, char *argv[]) {return 0;}" > null.c &&\
+  gcc -o /usr/lib/x86_64-linux-gnu/wine/fakedlls/winemenubuilder.exe null.c &&\
+  gcc -o /usr/lib/x86_64-linux-gnu/wine/fakedlls/services.exe null.c &&\
+  gcc -o /usr/lib/x86_64-linux-gnu/wine/fakedlls/plugplay.exe null.c
