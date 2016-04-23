@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name = 'dockbot',
-    version = '0.1.3',
+    version = '0.1.4',
     description =
     'A continuous integration system which uses Docker and Buildbot',
     long_description = open('README.md', 'rt').read(),
@@ -15,7 +15,7 @@ setup(
     url = 'https://github.com/CauldronDevelopmentLLC/dockbot',
     packages = ['dockbot'],
     include_package_data = True,
-    eager_resources = ['data/*'],
+    eager_resources = ['dockbot/data/*'],
     entry_points = {
         'console_scripts': [
             'dockbot = dockbot:run',
