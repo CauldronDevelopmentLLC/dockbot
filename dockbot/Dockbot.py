@@ -2,6 +2,7 @@ import json
 import os
 import random
 import string
+import fnmatch
 import dockbot
 
 
@@ -65,12 +66,12 @@ class Dockbot(object):
         if args.name is None: map(lambda x: command(args, x), self.images)
         elif args.name == 'master': command(args, master)
         else:
-            instance = self.find_instance(args.name)
-            if instance is None:
+            instances = self.find_instances(args.name)
+            if not instances:
                 raise dockbot.Error('Invalid image or container "%s"' %
                                    args.name)
 
-            command(args, instance)
+            map(lambda x: command(args, x), instances)
 
 
     def load_slaves(self, slave_root):
@@ -95,13 +96,17 @@ class Dockbot(object):
                                         projects, image_modes, True)
 
 
-    def walk_instances(self):
+    def find_instances(self, pattern):
+        instances = []
+
         for image in self.images:
-            yield image
             for container in image.containers:
-                yield container
+                if fnmatch.fnmatch(container.qname, pattern):
+                    instances.append(container)
 
+        if not instances:
+            for image in self.images:
+                if fnmatch.fnmatch(image.qname, pattern):
+                    instances.append(image)
 
-    def find_instance(self, name):
-        for instance in self.walk_instances():
-            if instance.qname == name: return instance
+        return instances
