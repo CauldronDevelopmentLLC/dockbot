@@ -18,7 +18,6 @@ class Image(object):
         self.path = path
         self.dir = os.path.dirname(path)
         self.platform = platform
-        self.projects = projects
         self.modes = modes
         self.context = self.conf.get_list('context', platform, slave)
 
@@ -31,9 +30,9 @@ class Image(object):
                 dockbot.get_resource('dockbot/data/master/nginx.conf')]
             self.containers.append(dockbot.Master(self))
 
-        self.deps = set()
-        for project in self.projects:
-            self.deps.update(self.conf.get_project_deps(project))
+        self.projects = set()
+        for project in projects:
+            self.projects.update(self.conf.get_project_deps(project))
 
 
     def __eq__(self, other): return self.name == other.name
@@ -186,7 +185,7 @@ class Image(object):
         dockbot.system(cmd + ['.'], False, 'build image', cwd = ctx_path)
 
 
-    def cmd_trigger(self):
+    def cmd_trigger(self, project = None):
         for container in self.containers:
             if isinstance(container, dockbot.Slave):
-                container.cmd_trigger()
+                container.cmd_trigger(project)
