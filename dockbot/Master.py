@@ -40,7 +40,7 @@ class Master(dockbot.Container):
             # Gather slave projects
             slave_projects = {}
             for slave in self.image.root.slaves:
-                for project in slave.deps:
+                for project in slave.projects:
                     if project not in slave_projects:
                         slave_projects[project] = set()
 

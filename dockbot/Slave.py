@@ -8,7 +8,10 @@ class Slave(dockbot.Container):
     def kind(self): return 'Slave'
 
 
-    def cmd_trigger(self, project = 'all'):
+    def cmd_trigger(self):
+        if dockbot.args.project is None: project = 'all'
+        else: project = dockbot.args.project
+
         if dockbot.args.all and not self.is_running():
             self.cmd_start()
 

@@ -27,7 +27,7 @@ BUILT = ('Built', 'white')
 DELETING = ('Deleting', 'Red')
 DIRTY = ('Dirty', 'red')
 
-usage = '%(prog)s [OPTIONS] COMMAND [CONTAINER]'
+usage = '%(prog)s [OPTIONS] COMMAND [CONTAINER] [-- ARGS...]'
 
 description = '''
 A tool for running a Buildbot master and set of slaves under Docker.
@@ -42,7 +42,7 @@ stop                 Stop docker instance(s).
 restart              Start then stop docker instance(s).
 build                Build image(s).
 delete               Delete an image or container.
-trigger [PROJECT]    Trigger one or all builds on a running slave container.
+trigger              Trigger one or all builds on a running slave container.
 
 '''
 
@@ -59,8 +59,6 @@ def run():
     parser.add_argument('name', metavar = 'NAME', nargs = '?',
                         help = 'Docker instance or container to operate on.  ' +
                         'Either "master" or one of the slave names.')
-    parser.add_argument('project', metavar = 'PROJECT', nargs = '?',
-                        help = 'A project name.')
     parser.add_argument('args', metavar = 'ARGS', nargs = '*',
                         help = 'Extra arguments to pass on to Docker')
     parser.add_argument('--slaves', metavar = 'DIR', default = 'slaves',
@@ -75,6 +73,8 @@ def run():
                         help = 'Run even if container is dirty')
     parser.add_argument('-a', '--all', action = 'store_true',
                         help = 'Perform all prerequisite actions automatically')
+    parser.add_argument('-p', '--project', nargs = 1,
+                        help = 'Specify a specific project to trigger.')
 
     global args
     args = parser.parse_args()

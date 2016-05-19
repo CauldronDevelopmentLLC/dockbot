@@ -31,8 +31,7 @@ def command(args, instance):
         raise dockbot.Error('Invalid command "%s" for %s.' % (
                 args.cmd, instance.kind()))
 
-    if args.project: func(args.project)
-    else: func()
+    func()
 
 
 

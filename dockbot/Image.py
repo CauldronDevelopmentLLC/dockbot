@@ -185,7 +185,7 @@ class Image(object):
         dockbot.system(cmd + ['.'], False, 'build image', cwd = ctx_path)
 
 
-    def cmd_trigger(self, project = None):
+    def cmd_trigger(self):
         for container in self.containers:
             if isinstance(container, dockbot.Slave):
-                container.cmd_trigger(project)
+                container.cmd_trigger()
