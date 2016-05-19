@@ -26,6 +26,7 @@ BUILDING = ('Building', 'cyan')
 BUILT = ('Built', 'white')
 DELETING = ('Deleting', 'Red')
 DIRTY = ('Dirty', 'red')
+TRIGGERED = ('Triggered', 'cyan')
 
 usage = '%(prog)s [OPTIONS] COMMAND [CONTAINER] [-- ARGS...]'
 
@@ -73,7 +74,7 @@ def run():
                         help = 'Run even if container is dirty')
     parser.add_argument('-a', '--all', action = 'store_true',
                         help = 'Perform all prerequisite actions automatically')
-    parser.add_argument('-p', '--project', nargs = 1,
+    parser.add_argument('-p', '--project',
                         help = 'Specify a specific project to trigger.')
 
     global args

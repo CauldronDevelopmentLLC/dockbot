@@ -8,7 +8,7 @@ from pkg_resources import Requirement, resource_filename
 import dockbot
 
 
-ANSI_COLORS = 'black red green yellow blue magenta cyan white orange'.split()
+ANSI_COLORS = 'black red green yellow blue magenta cyan white'.split()
 ANSI_CLEAR = '\033[0m'
 
 

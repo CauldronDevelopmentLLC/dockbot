@@ -16,7 +16,8 @@ class Slave(dockbot.Container):
             self.cmd_start()
 
         if not self.is_running():
-            raise dockbot.Error('Slave container not running')
+            dockbot.status_line(self.qname, *self.get_status())
+            return
 
         if project != 'all' and project not in self.image.projects:
             raise dockbot.Error('Unknown project %s' % project)
@@ -32,6 +33,8 @@ class Slave(dockbot.Container):
             msg = 'Failed to trigger build, possibly an HTTP proxy problem.'
             if dockbot.args.verbose: msg += '\n' + r.text
             raise dockbot.Error(msg)
+
+        dockbot.status_line(self.qname, *dockbot.TRIGGERED)
 
 
 
