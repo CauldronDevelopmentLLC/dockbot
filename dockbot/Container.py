@@ -48,7 +48,9 @@ class Container(object):
     def cmd_delete(self):
         if self.is_running():
             if dockbot.args.all: self.cmd_stop()
-            else: raise dockbot.Error('Cannot delete running container')
+            else:
+                dockbot.status_line(self.qname, *dockbot.RUNNING)
+                return
 
         if self.exists():
             dockbot.system(['docker', 'rm', self.qname], True,

@@ -137,8 +137,8 @@ class Image(object):
     def cmd_build(self):
         # Check if image is running
         if self.is_running():
-            raise dockbot.Error('Cannot rebuild image while any of its '
-                                'containers are running')
+            dockbot.status_line(self.qname, *dockbot.RUNNING)
+            return
 
         # Delete image if it exists
         self.cmd_delete()
