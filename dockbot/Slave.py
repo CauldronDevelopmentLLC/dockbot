@@ -1,7 +1,6 @@
 import shutil
 import os
 import dockbot
-import requests
 
 
 class Slave(dockbot.Container):
@@ -22,20 +21,7 @@ class Slave(dockbot.Container):
         if project != 'all' and project not in self.image.projects:
             raise dockbot.Error('Unknown project %s' % project)
 
-        url = 'http://%s:%d/builders/%s-%s/force' % (
-            self.conf['ip'], int(self.conf['http-port']),
-            self.name, project)
-
-        if dockbot.args.verbose: print 'triggering', url
-
-        r = requests.get(url)
-        if r.status_code != 200:
-            msg = 'Failed to trigger build, possibly an HTTP proxy problem.'
-            if dockbot.args.verbose: msg += '\n' + r.text
-            raise dockbot.Error(msg)
-
-        dockbot.status_line(self.qname, *dockbot.TRIGGERED)
-
+        dockbot.trigger(self.name, project, self.conf)
 
 
     def prepare_start(self):

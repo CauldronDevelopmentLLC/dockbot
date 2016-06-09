@@ -5,6 +5,7 @@ import shutil
 import pipes
 import json
 from pkg_resources import Requirement, resource_filename
+import requests
 import dockbot
 
 
@@ -82,3 +83,18 @@ def touch(path):
 
 def get_resource(path):
     return resource_filename(Requirement.parse('dockbot'), path)
+
+
+def trigger(name, project, conf):
+    url = 'http://%s:%d/builders/%s-%s/force' % (
+        conf['ip'], int(conf['http-port']), name, project)
+
+    if dockbot.args.verbose: print 'triggering', url
+
+    r = requests.get(url)
+    if r.status_code != 200:
+        msg = 'Failed to trigger build, possibly an HTTP proxy problem.'
+        if dockbot.args.verbose: msg += '\n' + r.text
+        raise dockbot.Error(msg)
+
+    dockbot.status_line("%s-%s" % (conf['namespace'], name), *dockbot.TRIGGERED)

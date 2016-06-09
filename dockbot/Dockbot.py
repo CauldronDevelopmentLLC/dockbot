@@ -34,6 +34,10 @@ def command(args, instance):
     func()
 
 
+def set_default(d, name, value):
+    if not name in d: d[name] = value
+
+
 
 class Dockbot(object):
     def __init__(self, args, conf_file):
@@ -44,11 +48,14 @@ class Dockbot(object):
             self.conf['namespace']
             self.conf['modes']
             self.conf['admin']
-            self.conf['ip']
 
         except Exception, e:
             raise dockbot.Error('%s\n\nFailed to parse config file "%s"' % (
                     e, conf_file))
+
+        # Defaults
+        set_default(self.conf, 'ip', '127.0.0.1')
+        set_default(self.conf, 'http-port', 8080)
 
         # Master
         dockerfile = dockbot.get_resource('dockbot/data/master/master.docker')
@@ -81,18 +88,23 @@ class Dockbot(object):
             if os.path.exists(conf_path):
                 slave_conf = json.load(open(conf_path, 'r'))
                 self.conf[slave] = slave_conf
+                remote = slave_conf.get('remote', False)
 
                 for name, data in slave_conf.get('images', {}).items():
                     dockerfile = '%s/%s.docker' % (slave_dir, name)
-                    if not os.path.exists(dockerfile):
+                    if not remote and not os.path.exists(dockerfile):
                         raise dockbot.Error('Missing file %s' % dockerfile)
 
                     name = ('%s-%s' % (slave, name)).lower()
                     projects = data.get('projects', [])
                     image_modes = data.get('modes', self.conf['modes'])
 
-                    yield dockbot.Image(self, name, dockerfile, slave,
-                                        projects, image_modes, True)
+                    if remote:
+                        yield dockbot.RemoteImage(self, name, slave, projects,
+                                                  image_modes)
+                    else:
+                        yield dockbot.Image(self, name, dockerfile, slave,
+                                            projects, image_modes, True)
 
 
     def find_instances(self, pattern):

@@ -10,6 +10,8 @@ from dockbot.Image import Image
 from dockbot.Container import Container
 from dockbot.Slave import Slave
 from dockbot.Master import Master
+from dockbot.RemoteImage import RemoteImage
+from dockbot.RemoteSlave import RemoteSlave
 from dockbot.util import *
 
 
@@ -27,6 +29,7 @@ BUILT = ('Built', 'white')
 DELETING = ('Deleting', 'Red')
 DIRTY = ('Dirty', 'red')
 TRIGGERED = ('Triggered', 'cyan')
+REMOTE = ('Remote', 'Magenta')
 
 usage = '%(prog)s [OPTIONS] COMMAND [CONTAINER] [-- ARGS...]'
 
