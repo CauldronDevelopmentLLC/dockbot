@@ -35,6 +35,7 @@ class Slave(dockbot.Container):
         # Install slave.tac
         path = dockbot.get_resource('dockbot/data/slave.tac')
         dockbot.publish_file(path, self.run_dir)
+        os.chmod(self.run_dir + '/slave.tac', 0755)
 
         # Install scons options
         f = None
@@ -50,9 +51,11 @@ class Slave(dockbot.Container):
         # Environment
         cmd = ['-e', 'SCONS_OPTIONS=/host/scons_options.py',
                '-e', 'PLATFORM=' + self.image.platform,
-               '-e', 'DOCKBOT_NAMESPACE=' + self.conf['namespace']]
+               '-e',
+               'DOCKBOT_MASTER_HOST=%(namespace)s-buildmaster' % self.conf,
+               '-e', 'DOCKBOT_MASTER_PORT=9989']
 
         # Link to buildmaster
-        cmd += ['--link', '%s-buildmaster:buildmaster' % self.conf['namespace']]
+        cmd += ['--link', '%(namespace)s-buildmaster:buildmaster' % self.conf]
 
         return cmd

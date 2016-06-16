@@ -1,4 +1,5 @@
 import os
+import copy
 import dockbot
 
 
@@ -37,15 +38,15 @@ class Master(dockbot.Container):
             for project in projects.values():
                 project['full_deps'] = set(project_deps(project['name']))
 
-            # Gather slave projects
-            slave_projects = {}
+            # Gather project slaves
+            project_slaves = {}
             for slave in self.image.root.slaves:
                 for project in slave.projects:
-                    if project not in slave_projects:
-                        slave_projects[project] = set()
+                    if project not in project_slaves:
+                        project_slaves[project] = set()
 
                     for container in slave.containers:
-                        slave_projects[project].add(container.name)
+                        project_slaves[project].add(container)
 
             # Sort projects
             project_order = []
@@ -85,23 +86,30 @@ class Master(dockbot.Container):
             # Projects
             f.write('\n# Projects\n')
             for project in project_order:
-                repo = project.get('repo', {})
+                name = project['name']
 
-                args = {
-                    'name': project['name'],
-                    'repo': repo.get('name', project['name']),
-                    'branch': project['repo'].get('branch', None),
-                    'slaves': list(slave_projects.get(project['name'], [])),
-                    'deps': project.get('deps', []),
-                    'packages': project.get('packages', []),
-                    'test': project.get('test', False),
-                    'build': project.get('build', True)
-                    }
+                for slave in project_slaves.get(name, []):
+                    project = copy.copy(project)
+                    overrides = slave.image.project_overrides.get(name, {})
+                    project.update(overrides)
 
-                if 'compile' in project:
-                    args['compile_command'] = project['compile']
+                    repo = project.get('repo', {})
 
-                f.write('add_build_project(**%s)\n' % args.__repr__())
+                    args = {
+                        'name': name,
+                        'repo': repo.get('name', name),
+                        'branch': project['repo'].get('branch', None),
+                        'slaves': [slave.name],
+                        'deps': project.get('deps', []),
+                        'packages': project.get('packages', []),
+                        'test': project.get('test', False),
+                        'build': project.get('build', True)
+                        }
+
+                    if 'compile' in project:
+                        args['compile_command'] = project['compile']
+
+                    f.write('add_build_project(**%s)\n' % args.__repr__())
 
 
         finally:

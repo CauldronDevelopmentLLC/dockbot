@@ -1,7 +1,7 @@
 import shutil
 import os
 import dockbot
-import requests
+import json
 
 
 class RemoteSlave(dockbot.Slave):
@@ -13,7 +13,21 @@ class RemoteSlave(dockbot.Slave):
     def cmd_status(self): dockbot.status_line(self.qname, *dockbot.REMOTE)
     def cmd_shell(self): self.cmd_status()
     def cmd_start(self, shell = False): self.cmd_status()
-    def prepare_start(self): raise dockbot.Error('Cannot start remote slave')
-    def cmd_stop(self): self.cmd_status()
-    def cmd_restart(self): self.cmd_status()
-    def cmd_build(self): self.cmd_status()
+
+
+    def cmd_build(self):
+        dockbot.status_line(self.qname, *dockbot.BUILDING)
+
+        self.prepare_start()
+
+        # Write env.json
+        env = {
+            'CONTAINER_NAME': self.name,
+            'SLAVE_PASS': self.conf['passwd'],
+            'DOCKBOT_MASTER_PORT': self.conf['buildbot-port'],
+            'DOCKBOT_MASTER_HOST': self.conf['ip']
+            }
+
+        f = open(self.run_dir + '/env.json', 'w')
+        json.dump(env, f, indent = 2, separators = (',', ': '))
+        f.close()

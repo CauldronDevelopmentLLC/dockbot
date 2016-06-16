@@ -49,6 +49,10 @@ class Config(object):
         self.conf.__setitem__(key, value)
 
 
+    def get_sub_key(self, key):
+        return Config(self.conf[key])
+
+
     def enum_by_key(self, key, mode = None):
         if key in self.conf: yield self.conf[key]
 
@@ -59,7 +63,7 @@ class Config(object):
 
     def enum_by_sub_key(self, name, key, mode = None):
         if name in self.conf:
-            for x in Config(self.conf[name]).enum_by_key(key, mode):
+            for x in self.get_sub_key(name).enum_by_key(key, mode):
                 yield x
 
 

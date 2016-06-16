@@ -10,35 +10,47 @@ def gen_hash(data):
 
 class Image(object):
     def __init__(self, root, name, path, platform = None, projects = [],
-                 modes = None, slave = False):
+                 modes = None, slave = False, remote = False):
         self.root = root
         self.conf = root.conf
         self.name = name
         self.qname = self.conf['namespace'] + '-' + name
-        self.path = path
-        self.dir = os.path.dirname(path)
         self.platform = platform
         self.modes = modes
-        self.context = self.conf.get_list('context', platform, slave)
+
+        if not remote:
+            self.path = path
+            self.dir = os.path.dirname(path)
+            self.context = self.conf.get_list('context', platform, slave)
 
         self.containers = []
-        if slave:
-            for mode in modes:
-                self.containers.append(dockbot.Slave(self, mode))
-        else:
+        if not slave:
             self.context += [
                 dockbot.get_resource('dockbot/data/master/nginx.conf')]
             self.containers.append(dockbot.Master(self))
+            return
 
+        # Slave only from here
+        for mode in modes:
+            self.containers.append(self.create_slave(mode))
+
+        # Slave projects
         self.projects = set()
         for project in projects:
             self.projects.update(self.conf.get_project_deps(project))
+
+        # Get project overrides
+        self.project_overrides = \
+            self.conf.get_sub_key(platform).get('projects', {})
 
 
     def __eq__(self, other): return self.name == other.name
     def __ne__(self, other): return not self.__eq__(other)
 
     def kind(self): return 'Image'
+
+
+    def create_slave(self, mode): return dockbot.Slave(self, mode)
 
 
     def is_running(self):
