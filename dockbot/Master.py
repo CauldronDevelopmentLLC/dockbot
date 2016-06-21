@@ -117,10 +117,6 @@ class Master(dockbot.Container):
 
 
     def prepare_start(self):
-        # Prepare run directory
-        publish = os.path.dirname(__file__) + '/publish.py'
-        dockbot.publish_file(publish, self.run_dir)
-
         # Generate buildmaster config
         self.gen_config()
 

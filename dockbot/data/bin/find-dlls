@@ -5,12 +5,18 @@ import sys
 import re
 import subprocess
 
+
+ignore_missing = False
+only_missing = False
+
+
 exclude = set('''
   advapi32.dll kernel32.dll msvcrt.dll ole32.dll user32.dll ws2_32.dll
   comdlg32.dll gdi32.dll imm32.dll oleaut32.dll shell32.dll winmm.dll
   winspool.drv wldap32.dll ntdll.dll d3d9.dll mpr.dll crypt32.dll dnsapi.dll
   shlwapi.dllversion.dll iphlpapi.dll msimg32.dll setupapi.dll
-  opengl32.dll glu32.dll wsock32.dll ws32.dll'''.split())
+  opengl32.dll glu32.dll wsock32.dll ws32.dll gdiplus.dll usp10.dll
+  comctl32.dll'''.split())
 
 
 def find_in_path(filename):
@@ -24,7 +30,7 @@ def find_in_path(filename):
                 return os.path.join(path, name)
 
 
-def _find_dlls(path, exclude = set()):
+def find_dlls(path, exclude = set()):
     cmd = ['objdump', '-p', path]
     p = subprocess.Popen(cmd, stdout = subprocess.PIPE)
     out, err = p.communicate()
@@ -39,19 +45,24 @@ def _find_dlls(path, exclude = set()):
 
             path = find_in_path(lib)
             if path is None:
+                if only_missing:
+                    print lib
+                    continue
+
+                if ignore_missing: continue
                 raise Exception('Lib "%s" not found' % lib)
 
-            yield path
-
-            for x in find_dlls(path, exclude):
-                yield x
-
-
-def find_dlls(path):
-    for lib in _find_dlls(arg, exclude):
-        print lib
+            if not only_missing: print path
+            find_dlls(path, exclude)
 
 
 if __name__ == "__main__":
     for arg in sys.argv[1:]:
-        find_dlls(arg)
+        if arg == '-i' or arg == '--ignore-missing':
+            ignore_missing = True
+
+        elif arg == '-m' or arg == '--only-missing':
+            exclude = set()
+            only_missing = True
+
+        else: find_dlls(arg, exclude)

@@ -4,6 +4,7 @@ import shlex
 import shutil
 import pipes
 import json
+import re
 from pkg_resources import Requirement, resource_filename
 import requests
 import dockbot
@@ -98,3 +99,12 @@ def trigger(name, project, conf):
         raise dockbot.Error(msg)
 
     dockbot.status_line("%s-%s" % (conf['namespace'], name), *dockbot.TRIGGERED)
+
+
+def copy_tree(src, dst):
+    for root, subdirs, files in os.walk(src):
+        target_dir = re.sub(r'^' + src, dst, root)
+        mkdirs(target_dir)
+
+        for filename in files:
+            publish_file(root + '/' + filename, target_dir)

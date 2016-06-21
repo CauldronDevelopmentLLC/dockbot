@@ -149,11 +149,18 @@ class Image(object):
     def cmd_build(self):
         # Check if image is running
         if self.is_running():
-            dockbot.status_line(self.qname, *dockbot.RUNNING)
-            return
+            if dockbot.args.all and (self.is_dirty() or dockbot.args.force):
+                self.cmd_stop()
+            else:
+                dockbot.status_line(self.qname, *dockbot.RUNNING)
+                return
 
-        # Delete image if it exists
-        self.cmd_delete()
+        if self.is_dirty() or dockbot.args.force:
+            self.cmd_delete() # Delete image if it exists
+
+        elif self.exists():
+            dockbot.status_line(self.qname, *dockbot.BUILT)
+            return
 
         dockbot.status_line(self.qname, *dockbot.BUILDING)
 
@@ -194,7 +201,8 @@ class Image(object):
         cmd += dockbot.args.args
 
         # Do build
-        dockbot.system(cmd + ['.'], False, 'build image', cwd = ctx_path)
+        dockbot.system(cmd + ['.'], False, 'build ' + self.qname,
+                       cwd = ctx_path)
 
 
     def cmd_trigger(self):

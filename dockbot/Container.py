@@ -97,13 +97,12 @@ class Container(object):
         # Create run dir
         dockbot.mkdirs(self.run_dir)
 
-        # Copy context
-        for root, subdirs, files in os.walk(self.image.dir):
-            target_dir = re.sub(r'^' + self.image.dir, self.run_dir, root)
-            dockbot.mkdirs(target_dir)
+        # Copy scripts
+        path = dockbot.get_resource('dockbot/data/bin')
+        dockbot.copy_tree(path, self.run_dir + '/bin')
 
-            for filename in files:
-                dockbot.publish_file(root + '/' + filename, target_dir)
+        # Copy context
+        dockbot.copy_tree(self.image.dir, self.run_dir)
 
         # Setup command
         cmd = ['docker', 'run', '--name', self.qname,
@@ -112,8 +111,9 @@ class Container(object):
         if not shell: cmd += self.prepare_start()
 
         # Environment
-        cmd += ['-e', 'CONTAINER_NAME=' + self.name,
-                '-e', 'SLAVE_PASS=' + self.conf['passwd']]
+        cmd += [
+            '-e', 'CONTAINER_NAME=' + self.name,
+            '-e', 'SLAVE_PASS=' + self.conf['passwd']]
         for key, value in self.env.items():
             cmd += ['-e', '%s=%s' % (key, value)]
 

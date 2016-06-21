@@ -17,6 +17,8 @@ EXPOSE 9989 80 8080
 
 WORKDIR /host
 
+ENV PATH=/host/bin:$PATH
+
 ENTRYPOINT \
   mkdir -m 777 -p $BUILDMASTER_BUILDS && \
   rm -f twistd.pid github-hook.pid && \
