@@ -8,6 +8,7 @@ import inspect
 import grp
 import filecmp
 import glob
+import time
 import subprocess
 from optparse import OptionParser, Option
 
@@ -296,7 +297,7 @@ class OptParser(OptionParser):
 def run():
     global options
 
-    os.umask(0777)
+    os.umask(0)
 
     # Parse command line
     parser = OptParser(option_list = opts, usage = usage, epilog = epilog)
@@ -322,7 +323,8 @@ def run():
             parser.error('Invalid release mode "%s"' % release)
 
         src = options.builds_dir
-        dst = options.releases_dir + '/' + release
+        dst = '%s/%s/%s' % (options.releases_dir, time.strftime('%Y%m%d'),
+                            release)
 
         if options.github: publish_github(options.github, dst, project, version)
         else: publish_release(src, dst, project, version)

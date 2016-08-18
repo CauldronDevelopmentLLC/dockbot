@@ -352,7 +352,7 @@ def add_package_build(type, factory, compile_command):
     factory.addStep(step)
 
     # Publish
-    cmd = WithProperties('publish build ' + file + \
+    cmd = WithProperties('/host/bin/publish build ' + file + \
                              ' %(slavename)s %(got_revision)s %(buildnumber)s')
     MasterShellCommand.haltOnFailure = True
     MasterShellCommand.flunkOnFailure = True

@@ -62,7 +62,6 @@ class Master(dockbot.Container):
                 project_order.append(project)
 
             for name in projects.keys(): order_projects(name)
-            # for p in project_order: print p['name']
 
             # Slaves
             f.write('\n# Slaves\n')
@@ -89,25 +88,24 @@ class Master(dockbot.Container):
                 name = project['name']
 
                 for slave in project_slaves.get(name, []):
-                    project = copy.copy(project)
+                    p = copy.deepcopy(project)
                     overrides = slave.image.project_overrides.get(name, {})
-                    project.update(overrides)
+                    p.update(overrides)
 
-                    repo = project.get('repo', {})
+                    repo = p.get('repo', {})
 
                     args = {
                         'name': name,
                         'repo': repo.get('name', name),
-                        'branch': project['repo'].get('branch', None),
+                        'branch': p['repo'].get('branch', None),
                         'slaves': [slave.name],
-                        'deps': project.get('deps', []),
-                        'packages': project.get('packages', []),
-                        'test': project.get('test', False),
-                        'build': project.get('build', True)
+                        'deps': p.get('deps', []),
+                        'packages': p.get('packages', []),
+                        'test': p.get('test', False),
+                        'build': p.get('build', True)
                         }
 
-                    if 'compile' in project:
-                        args['compile_command'] = project['compile']
+                    if 'compile' in p: args['compile_command'] = p['compile']
 
                     f.write('add_build_project(**%s)\n' % args.__repr__())
 
