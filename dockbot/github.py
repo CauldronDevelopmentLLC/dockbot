@@ -65,9 +65,9 @@ def human_time(t):
 def github_request(opts, method, url, **kwargs):
     if url.find('%(id)d') != -1 and 'id' not in opts:
         r = github_get(opts, releases_url + '/tags/%(tag)s')
-        opts['id'] = r['id']
+        opts['id'] = int(r['id'])
 
-    auth = HTTPBasicAuth(options.user, options.passwd)
+    auth = HTTPBasicAuth(opts['user'], opts['passwd'])
     url = url % opts
 
     if opts['debug']: print '%s %s' % (method, url)
@@ -115,7 +115,12 @@ def list_releases(opts):
 
 
 def get_release(opts):
-    return github_get(opts, releases_url + '/tags/%(tag)s')
+    url = releases_url
+
+    if 'id' in opts: url += '/%(id)d'
+    else: url += '/tags/%(tag)s'
+
+    return github_get(opts, url)
 
 
 def create_release(opts):
@@ -141,7 +146,7 @@ def publish_release(opts):
 def delete_release(opts):
     github_delete(opts, releases_url + '/%(id)d')
 
-    print 'Deleted release %(tag)s' % opts
+    print 'Deleted release %(id)d' % opts
 
 
 def get_release_assets(opts):
@@ -181,13 +186,18 @@ class ProgressFile(object):
 
     def progress(self):
         size = human_size(self.position)
-        percent = float(self.position) / self.size * 100
+        if self.size: percent = float(self.position) / self.size * 100
+        else: percent = 0
         now = time.time()
         deltaSize = self.position - self.last_bytes
         deltaTime = now - self.last
-        rate = deltaSize / deltaTime
-        eta = human_time((self.size - self.position) / rate)
-        rate = human_size(deltaSize / deltaTime)
+        if deltaSize and deltaTime:
+            rate = deltaSize / deltaTime
+            eta = human_time((self.size - self.position) / rate)
+            rate = human_size(deltaSize / deltaTime)
+        else:
+            eta = 'unknown'
+            rate = 0
 
         print '\r%s %0.1f%% %s/sec ETA %s%s' % (
             size, percent, rate, eta, ' ' * 16),
@@ -272,8 +282,8 @@ def run():
                       dest = 'org', default = default_org)
     parser.add_option('-r', '--repo', help = 'GitHub repository',
                       dest = 'repo')
-    parser.add_option('-i', '--id', help = 'GitHub repository id',
-                      dest = 'id')
+    parser.add_option('-i', '--id', help = 'GitHub release id',
+                      dest = 'id', type = 'int')
     parser.add_option('-b', '--body', help = 'Text for GitHub release body',
                       dest = 'body', default = default_body)
     parser.add_option('-t', '--title', help = 'Text for GitHub release title',
@@ -303,7 +313,7 @@ def run():
         return options.version and options.mode
 
     if cmd != 'list':
-        if not options.id or (options.version and options.mode):
+        if not (options.id or (options.version and options.mode)):
             parser.error('Release id or version and mode required')
 
     if has_tag():

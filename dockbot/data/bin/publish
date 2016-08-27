@@ -103,7 +103,7 @@ def find_builds(src, mode, project, version):
 
 def publish_github(auth, src, project, version):
     user, passwd = auth.split(':')
-    builds = list_builds(src, '', project, version)
+    builds = list_builds(src, project, version)
 
     releases = {}
 
@@ -124,7 +124,7 @@ def publish_github(auth, src, project, version):
 
     for name, release in releases.items():
         cmd = [
-            __dir__ + '/github-release', 'upload', '-c',
+            'github-release', 'upload', '-c',
             '-u', user,
             '-p', passwd,
             '-r', release['project'],
