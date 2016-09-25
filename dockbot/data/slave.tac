@@ -10,7 +10,7 @@ from buildbot.slave.bot import BuildSlave
 if os.path.exists('env.json'):
     import json
     env = json.load(open('env.json', 'r'))
-    for name, value in env:
+    for name, value in env.items():
         os.environ[name] = str(value)
 
 # Scons options

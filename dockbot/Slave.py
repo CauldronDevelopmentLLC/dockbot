@@ -11,12 +11,13 @@ class Slave(dockbot.Container):
         if dockbot.args.project is None: project = 'all'
         else: project = dockbot.args.project
 
-        if dockbot.args.all and not self.is_running():
-            self.cmd_start()
+        if not isinstance(self, dockbot.RemoteSlave):
+            if dockbot.args.all and not self.is_running():
+                self.cmd_start()
 
-        if not self.is_running():
-            dockbot.status_line(self.qname, *self.get_status())
-            return
+            if not self.is_running():
+                dockbot.status_line(self.qname, *self.get_status())
+                return
 
         if project != 'all' and project not in self.image.projects:
             raise dockbot.Error('Unknown project %s' % project)

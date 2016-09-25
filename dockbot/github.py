@@ -63,7 +63,7 @@ def human_time(t):
 
 
 def github_request(opts, method, url, **kwargs):
-    if url.find('%(id)d') != -1 and 'id' not in opts:
+    if url.find('%(id)d') != -1 and opts.get('id', None) is None:
         r = github_get(opts, releases_url + '/tags/%(tag)s')
         opts['id'] = int(r['id'])
 
@@ -131,7 +131,7 @@ def create_release(opts):
         'draft': True,
         }
     r = github_post(opts, releases_url, json = data)
-    opts['id'] = r['id']
+    opts['id'] = int(r['id'])
     opts['upload_url'] = r['upload_url']
 
     print 'Created draft release %(id)s' % opts

@@ -1,6 +1,8 @@
 # download
 RUN wget --quiet \
-  https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
+  https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2 || \
+  wget --quiet \
+  http://www.netgull.com/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
 
 # unpack
 RUN tar xf gcc-$GCC_VERSION.tar.bz2 && rm gcc-$GCC_VERSION.tar.bz2
