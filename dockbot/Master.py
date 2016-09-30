@@ -66,15 +66,15 @@ class Master(dockbot.Container):
             # Slaves
             f.write('\n# Slaves\n')
             for slave in self.image.root.slaves:
-                args = {
-                    'name': slave.name,
-                    'password': self.conf['passwd'],
-                    'types': [],
-                    'root': '/host',
-                    'configs': slave.modes
-                    }
+                for mode in slave.modes.keys():
+                    args = {
+                        'name': slave.name + '-' + mode,
+                        'password': self.conf['passwd'],
+                        'types': [],
+                        'root': slave.get_slave_root(mode)
+                        }
 
-                f.write('add_slave(**%s)\n' % args.__repr__())
+                    f.write('add_slave(**%s)\n' % args.__repr__())
 
             # Repos
             f.write('\n# Repos\n')

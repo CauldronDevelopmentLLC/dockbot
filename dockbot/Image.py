@@ -79,6 +79,18 @@ class Image(object):
                 if f is not None: f.close()
 
 
+    def get_slave_root(self, mode):
+        conf = self.conf[self.platform]
+
+        if 'modes' in conf and mode in conf['modes'] and \
+                'root' in conf['modes'][mode]:
+            return conf['modes'][mode]['root']
+
+        if 'root' in conf: return conf['root'] + '/' + mode
+
+        return '/host'
+
+
     def is_dirty(self):
         if dockbot.args.force: return False
         return self.get_data_hash() != gen_hash(self.gen_dockerfile())
