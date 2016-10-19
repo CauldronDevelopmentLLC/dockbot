@@ -20,6 +20,13 @@ class RemoteSlave(dockbot.Slave):
 
         self.prepare_start()
 
+        # Copy scripts
+        path = dockbot.get_resource('dockbot/data/bin')
+        dockbot.copy_tree(path, self.run_dir + '/bin')
+
+        # Copy context
+        dockbot.copy_tree(self.image.dir, self.run_dir)
+
         # Write env.json
         env = {
             'CONTAINER_NAME': self.name,

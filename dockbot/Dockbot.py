@@ -100,8 +100,8 @@ class Dockbot(object):
                     image_modes = data.get('modes', self.conf['modes'])
 
                     if remote:
-                        yield dockbot.RemoteImage(self, name, slave, projects,
-                                                  image_modes)
+                        yield dockbot.RemoteImage(self, name, slave_dir, slave,
+                                                  projects, image_modes)
                     else:
                         yield dockbot.Image(self, name, dockerfile, slave,
                                             projects, image_modes, True)

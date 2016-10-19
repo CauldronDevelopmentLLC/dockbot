@@ -4,8 +4,9 @@ import dockbot
 
 
 class RemoteImage(dockbot.Image):
-    def __init__(self, root, name, platform = None, projects = [],
+    def __init__(self, root, name, dir, platform = None, projects = [],
                  modes = None, slave = True, remote = True):
+        self.dir = dir
         dockbot.Image.__init__(self, root, name, None, platform, projects,
                                modes, slave, remote)
 
