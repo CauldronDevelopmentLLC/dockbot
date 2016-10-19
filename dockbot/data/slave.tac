@@ -11,7 +11,7 @@ if os.path.exists('env.json'):
     import json
     env = json.load(open('env.json', 'r'))
     for name, value in env.items():
-        os.environ[name] = str(value)
+        os.environ[name] = os.path.expandvars(str(value))
 
 # Scons options
 if os.path.exists('scons-options.py') and 'SCONS_OPTIONS' not in os.environ:
