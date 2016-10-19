@@ -25,8 +25,11 @@ class RemoteSlave(dockbot.Slave):
             'CONTAINER_NAME': self.name,
             'SLAVE_PASS': self.conf['passwd'],
             'DOCKBOT_MASTER_PORT': self.conf['buildbot-port'],
-            'DOCKBOT_MASTER_HOST': self.conf['ip']
+            'DOCKBOT_MASTER_HOST': self.conf['ip'],
+            'SCONS_OPTIONS': '$PWD/scons_options.py',
+            'PLATFORM': self.image.platform,
             }
+        env.update(self.env)
 
         f = open(self.run_dir + '/env.json', 'w')
         json.dump(env, f, indent = 2, separators = (',', ': '))
