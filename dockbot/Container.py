@@ -36,6 +36,18 @@ class Container(object):
         else: return dockbot.OFFLINE
 
 
+    def get_slave_root(self):
+        conf = self.conf[self.image.platform]
+
+        if 'modes' in conf and self.mode in conf['modes'] and \
+                'root' in conf['modes'][self.mode]:
+            return conf['modes'][self.mode]['root']
+
+        if 'root' in conf: return conf['root'] + '/' + self.name
+
+        return '/host'
+
+
     def is_running(self):
         return self.get_status() == dockbot.RUNNING
 
@@ -43,6 +55,13 @@ class Container(object):
     def exists(self):
         data = dockbot.inspect(self.qname)
         return data != dockbot.NOT_FOUND and 'State' in data[0]
+
+
+    def write_env(self, env):
+        f = open(self.run_dir + '/env.json', 'w')
+        json.dump(env, f, ensure_ascii = False, sort_keys = True, indent = 2,
+                  separators = (',', ': '))
+        f.close()
 
 
     def cmd_delete(self):
@@ -108,14 +127,20 @@ class Container(object):
         cmd = ['docker', 'run', '--name', self.qname,
                '-v', '%s/%s:/host' % (os.getcwd(), self.run_dir)]
 
-        if not shell: cmd += self.prepare_start()
+        env = {}
+        if not shell:
+            _cmd, _env = self.prepare_start()
+            cmd += _cmd
+            env.update(_env)
 
         # Environment
-        cmd += [
-            '-e', 'CONTAINER_NAME=' + self.name,
-            '-e', 'SLAVE_PASS=' + self.conf['passwd']]
-        for key, value in self.env.items():
-            cmd += ['-e', '%s=%s' % (key, value)]
+        env.update({
+                'SLAVE_NAME': self.name,
+                'SLAVE_PASS': self.conf['passwd'],
+                'PLATFORM': self.image.platform,
+                })
+        env.update(self.env)
+        self.write_env(env)
 
         # Ports
         for port in self.ports: cmd += ['-p', port]

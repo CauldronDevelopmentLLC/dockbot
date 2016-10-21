@@ -17,8 +17,6 @@ from dockbot.util import *
 
 args = {}
 
-CONFIG = 'dockbot.json'
-
 RUNNING = ('Running', 'green')
 OFFLINE = ('Offline', 'blue')
 NOT_FOUND = ('Not Found', 'magenta')
@@ -84,13 +82,7 @@ def run():
     args = parser.parse_args()
 
     try:
-        if not os.path.exists(CONFIG):
-            raise dockbot.Error(
-                'ERROR: `%s` not found in the current directory.\nMust be '
-                'run in the top-level directory of a dockbot configuration.' %
-                CONFIG)
-
-        dockbot.Dockbot(args, CONFIG)
+        dockbot.Dockbot(args)
 
     except dockbot.Error, e:
         print '\n%s\n' % e

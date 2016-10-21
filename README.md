@@ -25,6 +25,7 @@ which configure which projects the slave will run.  The directory structure
 should look like this:
 
     dockbot.json
+    dockbot.local
     lib/
     slaves/
       slave1/
@@ -37,6 +38,8 @@ should look like this:
       slaveN/
         ...
 
+The optional ``dockbot.local`` file can contain options which override
+``dockbot.json`` for a specific installation of a Dockbot configuration.
 The optional ``lib`` directory can contain Docker file fragments which may be
 used by multiple slaves.
 
@@ -64,6 +67,11 @@ These configuration values have the following meanings:
  * http-port - The HTTP port for the build master's Web interface.
  * buildbot-port - Opening this port allows other build slaves to connect.
 
+Often you may want to share a Dockbot configuration among multiple developers.
+In this case, it is useful to use ``dockbot.local`` to set values such as
+``ip`` or ``http-port`` which may differ depending on where the Dockbot
+configuration is installed.  ``dockbot.json`` should be check in to source
+control but ``dockbot.local`` should not.
 
 ## Build modes
 Often software can be built in more than one way.  Build modes make it possible

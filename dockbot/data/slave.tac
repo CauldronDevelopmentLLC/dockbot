@@ -11,11 +11,9 @@ if os.path.exists('env.json'):
     import json
     env = json.load(open('env.json', 'r'))
     for name, value in env.items():
-        os.environ[name] = os.path.expandvars(str(value))
-
-# Scons options
-if os.path.exists('scons-options.py') and 'SCONS_OPTIONS' not in os.environ:
-    os.environ['SCONS_OPTIONS'] = os.getcwd() + '/scons-options.py'
+        if value is None:
+            if name in os.environ: del os.environ[name]
+        else: os.environ[name] = os.path.expandvars(str(value))
 
 # Get CPU count
 try:
@@ -30,7 +28,7 @@ host = os.getenv('DOCKBOT_MASTER_HOST')
 port = os.getenv('DOCKBOT_MASTER_PORT')
 
 basedir = os.getcwd()
-slavename = os.getenv('CONTAINER_NAME')
+slavename = os.getenv('SLAVE_NAME')
 passwd = os.getenv('SLAVE_PASS')
 keepalive = 600
 usepty = False

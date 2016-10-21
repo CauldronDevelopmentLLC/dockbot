@@ -66,12 +66,12 @@ class Master(dockbot.Container):
             # Slaves
             f.write('\n# Slaves\n')
             for slave in self.image.root.slaves:
-                for mode in slave.modes.keys():
+                for container in slave.containers:
                     args = {
-                        'name': slave.name + '-' + mode,
+                        'name': container.name,
                         'password': self.conf['passwd'],
                         'types': [],
-                        'root': slave.get_slave_root(mode)
+                        'root': container.get_slave_root()
                         }
 
                     f.write('add_slave(**%s)\n' % args.__repr__())
@@ -126,4 +126,4 @@ class Master(dockbot.Container):
         if 'github-port' in self.conf:
             cmd += ['-p', '%s:%d:8080' % (ip, self.conf['github-port'])]
 
-        return cmd
+        return cmd, {}

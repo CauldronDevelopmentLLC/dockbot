@@ -50,13 +50,13 @@ class Slave(dockbot.Container):
             if f is not None: f.close()
 
         # Environment
-        cmd = ['-e', 'SCONS_OPTIONS=/host/scons_options.py',
-               '-e', 'PLATFORM=' + self.image.platform,
-               '-e',
-               'DOCKBOT_MASTER_HOST=%(namespace)s-buildmaster' % self.conf,
-               '-e', 'DOCKBOT_MASTER_PORT=9989']
+        env = {
+            'DOCKBOT_MASTER_HOST': '%(namespace)s-buildmaster' % self.conf,
+            'DOCKBOT_MASTER_PORT': 9989,
+            'SCONS_OPTIONS': '$PWD/scons_options.py',
+            }
 
         # Link to buildmaster
-        cmd += ['--link', '%(namespace)s-buildmaster:buildmaster' % self.conf]
+        cmd = ['--link', '%(namespace)s-buildmaster:buildmaster' % self.conf]
 
-        return cmd
+        return cmd, env

@@ -40,9 +40,19 @@ def set_default(d, name, value):
 
 
 class Dockbot(object):
-    def __init__(self, args, conf_file):
+    def __init__(self, args):
+        if not os.path.exists('dockbot.json'):
+            raise dockbot.Error(
+                'ERROR: `dockbot.json` not found in the current directory.\n'
+                'Must be run in the top-level directory of a dockbot '
+                'configuration.')
+
         try:
-            self.conf = dockbot.Config(json.load(open(conf_file, 'r')))
+            conf = json.load(open('dockbot.json', 'r'))
+            if os.path.exists('dockbot.local'):
+                conf.update(json.load(open('dockbot.local', 'r')))
+
+            self.conf = dockbot.Config(conf)
             self.conf['project']
             self.conf['url']
             self.conf['namespace']
@@ -50,8 +60,7 @@ class Dockbot(object):
             self.conf['admin']
 
         except Exception, e:
-            raise dockbot.Error('%s\n\nFailed to parse config file "%s"' % (
-                    e, conf_file))
+            raise dockbot.Error('%s\n\nFailed to parse `dockbot.json`' % e)
 
         # Defaults
         set_default(self.conf, 'ip', '127.0.0.1')
@@ -90,20 +99,25 @@ class Dockbot(object):
                 self.conf[slave] = slave_conf
                 remote = slave_conf.get('remote', False)
 
-                for name, data in slave_conf.get('images', {}).items():
-                    dockerfile = '%s/%s.docker' % (slave_dir, name)
-                    if not remote and not os.path.exists(dockerfile):
-                        raise dockbot.Error('Missing file %s' % dockerfile)
+                modes = self.conf['modes'].keys()
+                if 'modes' in slave_conf:
+                    modes = list(set(modes + slave_conf['modes'].keys()))
 
-                    name = ('%s-%s' % (slave, name)).lower()
+                for name, data in slave_conf.get('images', {}).items():
+                    fullname = ('%s-%s' % (slave, name)).lower()
                     projects = data.get('projects', [])
-                    image_modes = data.get('modes', self.conf['modes'])
+                    image_modes = data.get('modes', modes)
 
                     if remote:
-                        yield dockbot.RemoteImage(self, name, slave_dir, slave,
-                                                  projects, image_modes)
+                        yield dockbot.RemoteImage(self, fullname, slave_dir,
+                                                  slave, projects, image_modes)
+
                     else:
-                        yield dockbot.Image(self, name, dockerfile, slave,
+                        dockerfile = '%s/%s.docker' % (slave_dir, name)
+                        if not os.path.exists(dockerfile):
+                            raise dockbot.Error('Missing file %s' % dockerfile)
+
+                        yield dockbot.Image(self, fullname, dockerfile, slave,
                                             projects, image_modes, True)
 
 
