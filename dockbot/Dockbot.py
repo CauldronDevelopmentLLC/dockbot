@@ -98,10 +98,7 @@ class Dockbot(object):
                 slave_conf = json.load(open(conf_path, 'r'))
                 self.conf[slave] = slave_conf
                 remote = slave_conf.get('remote', False)
-
                 modes = self.conf['modes'].keys()
-                if 'modes' in slave_conf:
-                    modes = list(set(modes + slave_conf['modes'].keys()))
 
                 for name, data in slave_conf.get('images', {}).items():
                     fullname = ('%s-%s' % (slave, name)).lower()
