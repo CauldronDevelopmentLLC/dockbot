@@ -59,8 +59,10 @@ def run():
     parser.add_argument('cmd', metavar = 'COMMAND', nargs = '?',
                         default = 'status', help = cmd_help)
     parser.add_argument('name', metavar = 'NAME', nargs = '?',
-                        help = 'Docker instance or container to operate on.  ' +
-                        'Either "master" or one of the slave names.')
+                        help = 'Docker instance or container to operate on.  '
+                        'Either "master", one of the slave or image names or '
+                        'a glob pattern matching one or more slave or images '
+                        'names.')
     parser.add_argument('args', metavar = 'ARGS', nargs = '*',
                         help = 'Extra arguments to pass on to Docker')
     parser.add_argument('--slaves', metavar = 'DIR', default = 'slaves',
@@ -77,6 +79,9 @@ def run():
                         help = 'Perform all prerequisite actions automatically')
     parser.add_argument('-p', '--project',
                         help = 'Specify a specific project to trigger.')
+    parser.add_argument('-c', '--continue', action = 'store_true',
+                        dest='_continue',
+                        help = 'Continue running if an operation fails.')
 
     global args
     args = parser.parse_args()

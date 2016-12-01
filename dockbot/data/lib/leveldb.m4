@@ -1,16 +1,13 @@
-# Snappy
-RUN wget --quiet \
-  https://github.com/google/snappy/releases/download/1.1.3/snappy-1.1.3.tar.gz
-RUN tar xf snappy-1.1.3.tar.gz && rm snappy-1.1.3.tar.gz
-RUN cd snappy-1.1.3 && \
-  CXXFLAGS=-fPIC ./configure --enable-shared=no && \
-  make && \
-  make install
+define(`LEVELDB_VERSION', ifdef(`LEVELDB_VERSION', LEVELDB_VERSION, 1.18))
+define(`LEVELDB_BASE', leveldb-LEVELDB_VERSION)
+define(`LEVELDB_PKG', `v'LEVELDB_VERSION.tar.gz)
 
-# LevelDB
-RUN wget --quiet https://github.com/google/leveldb/archive/v1.18.tar.gz
-RUN tar xf v1.18.tar.gz && rm v1.18.tar.gz
-RUN cd leveldb-1.18 && \
-  make && \
-  cp libleveldb.a /usr/lib && \
-  cp -av include/leveldb/ /usr/include/
+WGET(https://github.com/google/leveldb/archive/LEVELDB_PKG)
+
+RUN tar xf LEVELDB_PKG &&\
+  cd LEVELDB_BASE &&\
+  make &&\
+  cp libleveldb.a /usr/lib &&\
+  cp -av include/leveldb/ /usr/include/ &&\
+  cd .. &&\
+  rm -rf LEVELDB_PKG LEVELDB_BASE

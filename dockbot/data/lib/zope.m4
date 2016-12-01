@@ -1,6 +1,9 @@
-RUN wget --quiet \
-  http://www.zope.org/Products/ZopeInterface/$ZOPE_VERSION/zope.interface-$ZOPE_VERSION.tar.gz
-RUN tar xf zope.interface-$ZOPE_VERSION.tar.gz && \
-  rm zope.interface-$ZOPE_VERSION.tar.gz
-RUN cd zope.interface-$ZOPE_VERSION; python setup.py install
-RUN rm -rf zope.interface-$ZOPE_VERSION
+define(`ZOPE_VERSION', ifdef(`ZOPE_VERSION', ZOPE_VERSION, 3.3.0))
+define(`ZOPE_BASE', zope.interface-ZOPE_VERSION)
+define(`ZOPE_PKG', ZOPE_BASE.tar.gz)
+
+WGET(http://www.zope.org/Products/ZopeInterface/ZOPE_VERSION/ZOPE_PKG)
+
+RUN tar xf ZOPE_PKG &&\
+  (cd ZOPE_BASE; python setup.py install) &&\
+  rm -rf ZOPE_BASE ZOPE_PKG

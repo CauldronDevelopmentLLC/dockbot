@@ -1,5 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash -e
 # Build a docker image for debian i386.
+
+if [ $(whoami) != "root" ]; then
+    echo "This script must be run as root.  Try again with sudo."
+    exit 1
+fi
 
 # settings
 arch=i386

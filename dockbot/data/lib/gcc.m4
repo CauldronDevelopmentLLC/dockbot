@@ -1,24 +1,25 @@
+define(`GCC_VERSION', ifdef(`GCC_VERSION', GCC_VERSION, 4.8.5))
+define(`GCC_BASE', gcc-GCC_VERSION)
+define(`GCC_PKG', GCC_BASE.tar.bz2)
+define(`GCC_NJOBS', ifdef(`GCC_NJOBS', GCC_NJOBS, CONCURRENCY))
+
 # download
-RUN wget --quiet \
-  https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2 || \
-  wget --quiet \
-  http://www.netgull.com/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
+RUN wget --quiet https://ftp.gnu.org/gnu/gcc/GCC_BASE/GCC_PKG ||\
+  wget --quiet http://www.netgull.com/gcc/releases/GCC_BASE/GCC_PKG
 
 # unpack
-RUN tar xf gcc-$GCC_VERSION.tar.bz2 && rm gcc-$GCC_VERSION.tar.bz2
+RUN tar xf GCC_PKG && rm GCC_PKG
 
 # prerequisites
-RUN cd gcc-$GCC_VERSION && \
-  ./contrib/download_prerequisites > /dev/null
+RUN cd GCC_BASE && ./contrib/download_prerequisites > /dev/null
 
 # configure, build & install
-RUN cd gcc-$GCC_VERSION && \
-  mkdir build && \
-  cd build && \
+RUN cd GCC_BASE &&\
+  mkdir build &&\
+  cd build &&\
   ../configure --enable-languages=c,c++ --disable-multilib --disable-bootstrap \
-    --prefix=/usr && \
-  make -j ${GCC_NJOBS-$(grep -c ^processor /proc/cpuinfo)} && \
-  make install
-
-# clean up
-RUN rm -rf gcc-$GCC_VERSION
+    --prefix=/usr &&\
+  make -j GCC_NJOBS &&\
+  make install &&\
+  cd ../.. &&\
+  rm -rf GCC_BASE

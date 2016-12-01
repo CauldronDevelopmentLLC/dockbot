@@ -1,6 +1,6 @@
-FROM 32bit/debian:stable
+FROM toopher/centos-i386:centos6
 
-include(debian.m4)
 include(32bit-uname.m4)
+include(centos.m4)
 include(boost.m4)
 include(slave.m4)

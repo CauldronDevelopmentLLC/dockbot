@@ -1,5 +1,7 @@
 WORKDIR /host
 
+RUN echo "\nalias ls='ls --color'" >> $HOME/.bashrc
+
 ENV PATH=/host/bin:$PATH
 
 ENTRYPOINT \

@@ -1,2 +1,5 @@
-include(base.m4)
+FROM debian:stable
+
+include(debian.m4)
+include(boost.m4)
 include(slave.m4)

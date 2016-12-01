@@ -1,0 +1,5 @@
+FROM centos:6.7
+
+include(centos.m4)
+include(boost.m4)
+include(slave.m4)

@@ -1,10 +1,13 @@
-# Create yum install script
-RUN echo -e "#!/bin/bash\n\
-rpm --rebuilddb && \n\
-yum install -y --quiet \$@ && \n\
-rpm --query --queryformat "" \$@" > /usr/bin/yum-install && \
-chmod +x /usr/bin/yum-install
+include(macros.m4)
+
+define(`YUM', `_(RUN
+  rpm --rebuilddb &&
+  yum install -y --quiet `$1' &&
+  rpm --query --queryformat "" `$1')')
 
 # Install prerequisites
-RUN yum-install wget gcc gcc-c++ git scons redhat-lsb make cmake rpm-build \
-  binutils-devel valgrind python-twisted openssl-devel openssh-clients clang
+YUM(wget gcc gcc-c++ git scons redhat-lsb make cmake rpm-build binutils-devel
+  valgrind python-twisted openssl-devel openssh-clients clang file m4 vim
+  unzip gettext)
+
+include(buildbot.m4)

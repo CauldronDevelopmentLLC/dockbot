@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import random
 import string
 import fnmatch
@@ -78,15 +79,21 @@ class Dockbot(object):
             self.conf['passwd'] = gen_password()
 
         # Run command in single image/container or all
-        if args.name is None: map(lambda x: command(args, x), self.images)
-        elif args.name == 'master': command(args, master)
+        if args.name is None: targets = self.images
+        elif args.name == 'master': targets = [master]
         else:
-            instances = self.find_instances(args.name)
-            if not instances:
+            targets = self.find_instances(args.name)
+            if not targets:
                 raise dockbot.Error('Invalid image or container "%s"' %
                                    args.name)
 
-            map(lambda x: command(args, x), instances)
+        for target in targets:
+            try:
+                command(args, target)
+
+            except dockbot.Error, e:
+                print '\n%s\n' % e
+                if not args._continue: sys.exit(1)
 
 
     def load_slaves(self, slave_root):
