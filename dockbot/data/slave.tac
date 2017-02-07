@@ -6,6 +6,8 @@ from twisted.application import service
 from twisted.python import log, logfile
 from buildbot.slave.bot import BuildSlave
 
+if 'PWD' not in os.environ: os.environ['PWD'] = os.getcwd()
+
 # Import environment
 if os.path.exists('env.json'):
     import json
@@ -13,7 +15,10 @@ if os.path.exists('env.json'):
     for name, value in env.items():
         if value is None:
             if name in os.environ: del os.environ[name]
-        else: os.environ[name] = os.path.expandvars(str(value))
+        else:
+            if isinstance(value, (list, tuple)):
+                value = os.pathsep.join(map(str, value))
+            os.environ[name] = os.path.expandvars(str(value))
 
 # Get CPU count
 try:
