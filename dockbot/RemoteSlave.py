@@ -35,7 +35,7 @@ class RemoteSlave(dockbot.Slave):
             'DOCKBOT_MASTER_HOST': self.conf['ip'],
             'SCONS_OPTIONS': '$PWD/scons_options.py',
             'PLATFORM': self.image.platform,
-            'PATH': '$PWD/bin' + os.pathsep + '$PATH',
+            'PATH': ['$PWD/bin', '$PATH'],
             }
         env.update(self.env)
 

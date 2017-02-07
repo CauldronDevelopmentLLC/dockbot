@@ -3,7 +3,7 @@ MAINTAINER joseph@cauldrondevelopment.com
 
 # Install prerequisites
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends git python-twisted-core procps\
+  apt-get install -y --no-install-recommends git python-twisted-core procps \
     debian-keyring debian-archive-keyring ca-certificates rsync make nginx \
     python-twisted-web less
 

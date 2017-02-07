@@ -339,8 +339,8 @@ def add_package_build(type, factory, compile_command):
                             command = cmd, warningPattern = warnPat))
 
     # Get file name
-    factory.addStep(SetProperty(command = 'cat %s.txt' % type,
-                                property = 'package_name'))
+    factory.addStep(FileUpload(slavesrc = type + '.txt',
+                               property = 'package_name'))
 
     # Get file
     src = '%(package_name)s'
@@ -378,12 +378,12 @@ def add_build_project(
         f.addStep(Compile(command = compile_command, warningPattern = warnPat))
 
     if test:
-        if isinstance(test, str): test_dir = test
-        else: test_dir = 'tests'
+        import shlex
 
-        cmd = [test_dir + '/testHarness', '--no-color', '-C', test_dir,
-               '--build', '--diff-failed', '--view-failed', '--view-unfiltered',
-               '--save-failed']
+        if isinstance(test, bool): cmd = ['scons', 'test']
+        elif isinstance(test, str): cmd = shlex.split(test)
+        else: cmd = test
+
         f.addStep(ShellCommand(description = 'testing',
                                descriptionDone = 'tests', command = cmd,
                                haltOnFailure = True))
