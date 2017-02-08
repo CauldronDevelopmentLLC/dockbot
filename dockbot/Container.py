@@ -181,3 +181,6 @@ class Container(object):
 
     def cmd_build(self):
         self.image.cmd_build()
+
+
+    def cmd_publish(self): pass

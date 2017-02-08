@@ -97,6 +97,17 @@ class Image(object):
         return out
 
 
+    def get_project(self, name):
+        import copy
+        for project in self.conf.projects:
+            if project['name'] == name:
+                p = copy.deepcopy(project)
+                p.update(self.project_overrides.get(name, {}))
+                return p
+
+        raise dockbot.Error('Project "%s" not found' % name)
+
+
     def exists(self):
         return dockbot.inspect(self.qname) != dockbot.NOT_FOUND
 
@@ -209,3 +220,8 @@ class Image(object):
         for container in self.containers:
             if isinstance(container, dockbot.Slave):
                 container.cmd_trigger()
+
+
+    def cmd_publish(self):
+        for container in self.containers:
+            container.cmd_publish()

@@ -45,8 +45,15 @@ restart              Start then stop docker instance(s).
 build                Build image(s).
 delete               Delete an image or container.
 trigger              Trigger one or all builds on a running slave container.
+publish              Publish a project's files.
 
 '''
+
+
+def version_type(s):
+        if not re.match(r'^\d+\.\d+$', s):
+            raise argparse.ArgumentTypeError('Must be <major>.<minor>')
+        return s
 
 
 def run():
@@ -79,9 +86,32 @@ def run():
                         help = 'Perform all prerequisite actions automatically')
     parser.add_argument('-p', '--project',
                         help = 'Specify a specific project to trigger.')
+    parser.add_argument('--release', default = 'alpha', choices = (
+            'alpha', 'beta', 'public'), help = 'Release to publish.')
+    parser.add_argument('--version', type = version_type,
+                        help = 'Version to publish.  Latest version if '
+                        'omitted.')
+    parser.add_argument('--mode',
+                        help = 'Build mode to publish.  Otherwise, all modes.')
     parser.add_argument('-c', '--continue', action = 'store_true',
                         dest='_continue',
                         help = 'Continue running if an operation fails.')
+    parser.add_argument('--group', help = 'The system group to use when '
+                        'publishing files.'),
+    parser.add_argument('--fperms', default = 0644, type = int,
+                        help = 'The file permissions to use when publishing '
+                        'files.'),
+    parser.add_argument('--dperms', default = 0755, type = int,
+                        help = 'The directory permissions to use when '
+                        'publishing files.'),
+    parser.add_argument('--key', help = 'Path to the key file used for signing '
+                        'published files.'),
+    parser.add_argument('--password', help = 'Password used to unlock signing '
+                        'key.  Will be prompted for if not supplied.'),
+    parser.add_argument('--ts-url',
+                        default = 'http://timestamp.comodoca.com/authenticode',
+                        help = 'Time stamping URL used for signing published '
+                        'files.'),
 
     global args
     args = parser.parse_args()
