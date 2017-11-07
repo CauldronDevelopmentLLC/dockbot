@@ -100,7 +100,7 @@ def osslsigncode(src, target, summary = None, url = None):
     if not dockbot.args.key: raise dockbot.Error('Missing --key <path>')
 
     while not dockbot.args.password:
-        dockbot.args.password = getpass.getpass()
+        dockbot.args.password = getpass.getpass('Key password: ')
 
     cmd = ['osslsigncode', 'sign', '-pkcs12', dockbot.args.key, '-in', src,
            '-out', target + '/' + os.path.basename(src)]

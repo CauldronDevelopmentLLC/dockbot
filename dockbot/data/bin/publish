@@ -101,7 +101,7 @@ def find_builds(src, mode, project, version):
         yield build
 
 
-def publish_github(auth, src, project, version):
+def publish_github(auth, org, src, project, version):
     user, passwd = auth.split(':')
     builds = list_builds(src, project, version)
 
@@ -127,6 +127,7 @@ def publish_github(auth, src, project, version):
             'github-release', 'upload', '-c',
             '-u', user,
             '-p', passwd,
+            '-o', org,
             '-r', release['project'],
             '-v', release['version'],
             '-m', release['mode'],
@@ -251,6 +252,7 @@ opts = [
     Option('-v', '--verbose', help = 'Verbose output.', action = 'store_true'),
     Option('-g', '--github', help = 'Publish to GitHub',
            metavar = 'USER:TOKEN/PASS'),
+    Option('-o', '--org', help = 'GitHub organization'),
     Option('-G', '--group', default = 'www-data',
            help = 'The system group to use when publishing files'),
     Option('-p', '--fperms', default = 0644, type = 'int',
@@ -326,7 +328,8 @@ def run():
         dst = '%s/%s/%s' % (options.releases_dir, time.strftime('%Y%m%d'),
                             release)
 
-        if options.github: publish_github(options.github, dst, project, version)
+        if options.github:
+            publish_github(options.github, options.org, dst, project, version)
         else: publish_release(src, dst, project, version)
 
     elif cmd == 'build':
