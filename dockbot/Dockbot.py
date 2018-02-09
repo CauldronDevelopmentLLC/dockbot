@@ -60,7 +60,7 @@ class Dockbot(object):
             self.conf['modes']
             self.conf['admin']
 
-        except Exception, e:
+        except Exception as e:
             raise dockbot.Error('%s\n\nFailed to parse `dockbot.json`' % e)
 
         # Defaults
@@ -91,8 +91,8 @@ class Dockbot(object):
             try:
                 command(args, target)
 
-            except dockbot.Error, e:
-                print '\n%s\n' % e
+            except dockbot.Error as e:
+                print('\n%s\n' % e)
                 if not args._continue: sys.exit(1)
 
 

@@ -83,7 +83,7 @@ class Container(object):
     def cmd_config(self):
         config = {'env': self.env, 'scons': self.scons, 'args': self.args,
                   'ports': self.ports, 'run_dir': self.run_dir}
-        print json.dumps(config, indent = 4, separators = (',', ': '))
+        print(json.dumps(config, indent = 4, separators = (',', ': ')))
 
 
     def cmd_shell(self):

@@ -202,7 +202,7 @@ class Image(object):
         # Link context
         for path in self.context:
             target = os.path.join(ctx_path, os.path.basename(path))
-            if dockbot.args.verbose: print '%s -> %s' % (path, target)
+            if dockbot.args.verbose: print('%s -> %s' % (path, target))
             shutil.copy(path, target)
 
         # Build command

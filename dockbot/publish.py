@@ -2,4 +2,4 @@ import inspect, os
 
 DIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-execfile(DIR + '/data/bin/publish')
+exec(open(DIR + '/data/bin/publish', 'r').read())

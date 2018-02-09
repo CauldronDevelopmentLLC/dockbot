@@ -8,6 +8,7 @@ import filecmp
 import subprocess
 import getpass
 import pipes
+import grp
 
 
 def find_newest_version(path):
@@ -70,7 +71,7 @@ def publish_file(src, target, install):
 
     if not dockbot.args.force and os.path.exists(dst):
         if filecmp.cmp(src, dst): return False # Files are the same
-        print '\033[91m"%s" already exists.\033[0m' % dst
+        print('\033[91m"%s" already exists.\033[0m' % dst)
         return False
 
     ensure_dir(target)
@@ -93,7 +94,7 @@ def publish_latest(src, target, install = shutil.copy):
     ext = get_extension(src)
     force_link(os.path.basename(src), '%s/latest%s' % (target, ext))
 
-    print 'Installed %s to %s' % (src, target)
+    print('Installed %s to %s' % (src, target))
 
 
 def osslsigncode(src, target, summary = None, url = None):
@@ -110,7 +111,7 @@ def osslsigncode(src, target, summary = None, url = None):
     if dockbot.args.ts_url: cmd += ['-ts', dockbot.args.ts_url]
 
     if dockbot.args.verbose:
-        print 'Calling:', ' '.join(pipes.quote(s) for s in cmd)
+        print('Calling:', ' '.join(pipes.quote(s) for s in cmd))
 
     cmd += ['-pass', dockbot.args.password]
 
@@ -186,12 +187,12 @@ class Slave(dockbot.Container):
         # Install slave.tac
         path = dockbot.get_resource('dockbot/data/slave.tac')
         dockbot.publish_file(path, self.run_dir)
-        os.chmod(self.run_dir + '/slave.tac', 0755)
+        os.chmod(self.run_dir + '/slave.tac', 0o755)
 
         # Install scons options
         f = None
         try:
-            f = open(self.run_dir + '/' + 'scons_options.py', 'w', 0644)
+            f = open(self.run_dir + '/' + 'scons_options.py', 'w', 0o644)
 
             for key, value in self.scons.items():
                 f.write('%s = %s\n' % (key, value.__repr__()))

@@ -132,10 +132,9 @@ class BuilderInfo:
         return False
 
 
-    def __cmp__(self, other):
-        if self.priority == other.priority:
-            return cmp(self.name, other.name)
-        return other.priority - self.priority
+    def __lt__(self, other):
+        if self.priority == other.priority: return self.name < other.name
+        return other.priority < self.priority
 
 
     def __hash__(self):
@@ -158,7 +157,7 @@ class DepScheduler(BaseUpstreamScheduler):
         self.builder_map = {}
         for builder in self.builders:
             if builder.has_cycle():
-                raise Exception, "Detected cycle in builder dependencies."
+                raise Exception('Detected cycle in builder dependencies.')
 
             self.builder_map[builder.name] = builder
 
@@ -327,7 +326,7 @@ def make_repo_step(name, branch = None, mode = 'update'):
 
         return Git(**kwargs)
 
-    else: raise Exception, 'Unrecognized repo type "%s"' % info['type']
+    else: raise Exception('Unrecognized repo type "%s"' % info['type'])
 
 
 def add_package_build(type, factory, compile_command):
@@ -433,7 +432,7 @@ def add_build_all():
 
 
 # Import local configuration
-execfile('local.cfg')
+exec(open('local.cfg', 'r').read())
 
 
 # Finish up

@@ -98,10 +98,10 @@ def run():
                         help = 'Continue running if an operation fails.')
     parser.add_argument('--group', help = 'The system group to use when '
                         'publishing files.'),
-    parser.add_argument('--fperms', default = 0644, type = int,
+    parser.add_argument('--fperms', default = 0o644, type = int,
                         help = 'The file permissions to use when publishing '
                         'files.'),
-    parser.add_argument('--dperms', default = 0755, type = int,
+    parser.add_argument('--dperms', default = 0o755, type = int,
                         help = 'The directory permissions to use when '
                         'publishing files.'),
     parser.add_argument('--key', help = 'Path to the key file used for signing '
@@ -119,6 +119,6 @@ def run():
     try:
         dockbot.Dockbot(args)
 
-    except dockbot.Error, e:
-        print '\n%s\n' % e
+    except dockbot.Error as e:
+        print('\n%s\n' % e)
         sys.exit(1)

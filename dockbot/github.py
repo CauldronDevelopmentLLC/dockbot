@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re
 import json
@@ -40,7 +40,7 @@ class GitHubError(Exception):
 
 
 def pretty_print_json(data):
-    print json.dumps(data, indent = 2, separators = (',', ': '))
+    print(json.dumps(data, indent = 2, separators = (',', ': ')))
 
 
 def human_size(size, suffix = 'B'):
@@ -68,7 +68,7 @@ def human_time(t):
 
 def github_auth(opts):
     if (not opts['token']) and opts['user'] and opts['passwd']:
-        if opts['debug']: print 'Using user/pass authentication'
+        if opts['debug']: print('Using user/pass authentication')
         return HTTPBasicAuth(opts['user'], opts['passwd'])
 
 
@@ -79,7 +79,7 @@ def github_request(opts, method, url, **kwargs):
 
     url = url % opts
 
-    if opts['debug']: print '%s %s' % (method, url)
+    if opts['debug']: print('%s %s' % (method, url))
 
     hdrs = None
     if opts['token']:
@@ -91,11 +91,11 @@ def github_request(opts, method, url, **kwargs):
     if 300 <= r.status_code:
         if r.headers['Content-Type'].startswith('application/json'):
             if opts['debug']: pretty_print_json(r.json())
-            raise GitHubError, 'Error: ' + r.json()['message']
+            raise GitHubError('Error: ' + r.json()['message'])
 
         r.raise_for_status()
 
-    if r.status_code != requests.codes.no_content:
+    if r.status_code != requests.codes.NO_CONTENT:
         return r.json()
 
 
@@ -116,12 +116,12 @@ def github_delete(opts, path, **kwargs):
 
 
 def print_release(release):
-    print '%(tag_name)s #%(id)d %(created_at)s %(name)s' % release
+    print('%(tag_name)s #%(id)d %(created_at)s %(name)s' % release)
 
 
 def print_asset(asset):
     asset['hsize'] = human_size(asset['size'], '')
-    print '%(name)s #%(id)d %(created_at)s %(hsize)s' % asset
+    print('%(name)s #%(id)d %(created_at)s %(hsize)s' % asset)
 
 
 def get_release_mode(release):
@@ -160,19 +160,19 @@ def create_release(opts):
     opts['id'] = int(r['id'])
     opts['upload_url'] = r['upload_url']
 
-    print 'Created draft release %(id)s' % opts
+    print('Created draft release %(id)s' % opts)
 
 
 def publish_release(opts):
     github_patch(opts, releases_url + '/%(id)d', json = {'draft': False})
 
-    print 'Published release %(tag)s' % opts
+    print('Published release %(tag)s' % opts)
 
 
 def delete_release(opts):
     github_delete(opts, releases_url + '/%(id)d')
 
-    print 'Deleted release %(id)d' % opts
+    print('Deleted release %(id)d' % opts)
 
 
 def get_release_assets(opts):
@@ -191,11 +191,11 @@ def match_release_assets(opts, name):
 
     for asset in assets:
         if fnmatch.fnmatch(asset['name'], name) or str(asset['id']) == name:
-            if opts['debug']: print json.dumps(asset)
+            if opts['debug']: print(json.dumps(asset))
             matches.append(asset)
 
     if len(matches): return matches
-    raise GitHubError, 'Asset "%s" not found' % name
+    raise GitHubError('Asset "%s" not found' % name)
 
 
 class Progress(object):
@@ -231,8 +231,8 @@ class Progress(object):
             eta = 'unknown'
             rate = 0
 
-        print '\r%s %0.1f%% %s/sec ETA %s%s' % (
-            size, percent, rate, eta, ' ' * 16),
+        print('\r%s %0.1f%% %s/sec ETA %s%s' %
+              (size, percent, rate, eta, ' ' * 16), end = '')
         sys.stdout.flush()
 
         self.last = now
@@ -246,7 +246,7 @@ class ProgressFile(object):
         self.path = path
 
         if not os.path.exists(path):
-            raise GitHubError, 'Cannot access "%(path)s"' % path
+            raise GitHubError('Cannot access "%(path)s"' % path)
 
         self.size = os.path.getsize(path)
 
@@ -290,13 +290,13 @@ def upload_release_asset(opts, path):
     url += '?name=%(asset)s'
 
     if not os.path.exists(path):
-        raise GitHubError, 'Cannot access "%s"' % path
+        raise GitHubError('Cannot access "%s"' % path)
 
     f = None
     try:
         f = ProgressFile(path)
 
-        print 'Uploading %s %s' % (opts['asset'], human_size(f.size))
+        print('Uploading %s %s' % (opts['asset'], human_size(f.size)))
 
         import magic
         m = magic.open(magic.MAGIC_MIME)
@@ -317,15 +317,15 @@ def delete_release_asset(opts, path):
 
     for asset in match_release_assets(opts, name):
         github_delete(opts, releases_url + '/assets/%(id)d' % asset)
-        print '%(name)s deleted' % asset
+        print('%(name)s deleted' % asset)
 
 
 def download_release_asset(opts, pattern):
     for asset in match_release_assets(opts, pattern):
         if not opts['force'] and os.path.exists(asset['name']):
-            raise GitHubError, 'Asset "%(name)s" already exists' % asset
+            raise GitHubError('Asset "%(name)s" already exists' % asset)
 
-        print 'Downloading %s %s' % (asset['name'], human_size(asset['size']))
+        print('Downloading %s %s' % (asset['name'], human_size(asset['size'])))
 
         hdrs = {'Accept': 'application/octet-stream'}
         if opts['token']: hdrs['Authorization'] = 'token %(token)s' % opts
@@ -439,8 +439,7 @@ def run():
                 for asset in assets:
                     try:
                         delete_release_asset(opts, asset)
-                    except GitHubError as e:
-                        print e.message
+                    except GitHubError as e: print(e)
 
             else: delete_release(opts)
 
@@ -456,8 +455,7 @@ def run():
             for asset in assets:
                 try:
                     upload_release_asset(opts, asset)
-                except GitHubError as e:
-                    print e.message
+                except GitHubError as e: print(e)
 
         elif cmd == 'download':
             if not len(assets): assets = ['*']
@@ -465,8 +463,7 @@ def run():
 
         else: parser.error('Unsupported command "%s"' % cmd)
 
-    except GitHubError as e:
-        print e.message
+    except GitHubError as e: print(e)
 
 
 if __name__ == "__main__": run()

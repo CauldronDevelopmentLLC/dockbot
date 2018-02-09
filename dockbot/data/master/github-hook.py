@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # WSGI app which forwards GitHub change notifications to Buildbot
 
@@ -44,7 +44,7 @@ def process_change(response, payload, server, port, user, repo, repo_url):
     }]
 
     def connect_failed(error):
-        print 'Connect failed: ' + error.getErrorMessage()
+        print('Connect failed:', error.getErrorMessage())
 
     def connected(remote, changes):
         return add_change(None, remote, changes.__iter__())
@@ -68,7 +68,7 @@ def add_change(dummy, remote, changei, src = 'git'):
         return None
 
     def add_change_failed(error):
-        print 'Add change failed: ' + error.getErrorMessage()
+        print('Add change failed:', error.getErrorMessage())
         remote.broker.transport.loseConnection()
 
     change['src'] = src

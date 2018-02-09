@@ -33,23 +33,23 @@ def ansi_code(color = 'black', fg = True, intense = False):
 
 def status_line(left, right, color):
     padding = dockbot.args.width - len(left) - len(right) - 2
-    print '%s%s%s[%s]%s' % (
-        left, ' ' * padding, ansi_code(color), right, ANSI_CLEAR)
+    print('%s%s%s[%s]%s' %
+          (left, ' ' * padding, ansi_code(color), right, ANSI_CLEAR))
 
 
 def publish_file(source, dest):
     target = os.path.join(dest, os.path.basename(source))
 
     if os.path.exists(target): os.unlink(target)
-    if dockbot.args.verbose: print '%s -> %s' % (source, target)
+    if dockbot.args.verbose: print('%s -> %s' % (source, target))
     shutil.copy(source, target)
 
 
 def system(cmd, redirect = False, err_action = None, **kwargs):
-    if isinstance(cmd, basestring): cmd = shlex.split(cmd)
+    if isinstance(cmd, str): cmd = shlex.split(cmd)
 
     if dockbot.args.verbose:
-        print '@', ' '.join(pipes.quote(s) for s in cmd)
+        print('@', ' '.join(pipes.quote(s) for s in cmd))
 
     if redirect:
         kwargs['stdout'] = subprocess.PIPE
@@ -90,7 +90,7 @@ def trigger(name, project, conf):
     url = 'http://%s:%d/builders/%s-%s/force' % (
         conf['ip'], int(conf['http-port']), name, project)
 
-    if dockbot.args.verbose: print 'triggering', url
+    if dockbot.args.verbose: print('triggering', url)
 
     r = requests.get(url)
     if r.status_code != 200:
