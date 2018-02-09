@@ -190,11 +190,11 @@ class Image(object):
         f = None
         try:
             f = open(dockerfile, 'w')
-            f.write(data)
+            f.write(data.decode('utf-8'))
             f.close()
 
             f = open(self.get_hash_path(), 'w')
-            f.write(data_hash)
+            f.write(data_hash.decode('utf-8'))
 
         finally:
             if f is not None: f.close()
