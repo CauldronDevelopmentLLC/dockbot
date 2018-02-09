@@ -194,7 +194,7 @@ class Image(object):
             f.close()
 
             f = open(self.get_hash_path(), 'w')
-            f.write(data_hash.decode('utf-8'))
+            f.write(data_hash)
 
         finally:
             if f is not None: f.close()
