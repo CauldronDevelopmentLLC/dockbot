@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -67,7 +67,7 @@ def publish_file(src, target, force):
         if filecmp.cmp(src, dst): return False # Files are the same
 
         if not force:
-            print '\033[91m"%s" already exists.\033[0m' % dst
+            print('\033[91m"%s" already exists.\033[0m' % dst)
             return False
 
     ensure_dir(target)
@@ -92,7 +92,7 @@ def find_builds(src, mode, project, version):
     for build in os.listdir(base):
         fullpath = base + '/' + build
 
-        if options.verbose: print 'Checking', fullpath
+        if options.verbose: print('Checking', fullpath)
 
         if not os.path.isdir(fullpath): continue
         if not re.match(r'^[^-]+-[^-]+-[^-]+$', build): continue
@@ -144,7 +144,7 @@ def publish_latest(path, target):
         ext = get_extension(path)
         force_link(os.path.basename(path), '%s/latest%s' % (target, ext))
 
-    print 'Installed %s to %s' % (path, target)
+    print('Installed %s to %s' % (path, target))
 
     return True
 
@@ -200,19 +200,19 @@ def publish_build(package, slave_name, rev, build):
     ensure_dir(dir)
 
     # Move
-    if options.verbose: print 'mv %s %s' % (package, dir)
+    if options.verbose: print('mv %s %s' % (package, dir))
     publish_file(package, dir, True)
     os.unlink(package)
-    print '%s/%s' % (url, filename)
+    print('%s/%s' % (url, filename))
 
     # Link latest dir
-    if options.verbose: print 'ln -sf %s %s' % (rev_dir, latest)
+    if options.verbose: print('ln -sf %s %s' % (rev_dir, latest))
     force_link(rev_dir, latest)
 
     # Link latest package
     latest += get_extension(filename)
     latest_package = '%s/%s' % (rev_dir, filename)
-    if options.verbose: print 'ln -sf %s %s' % (latest_package, latest)
+    if options.verbose: print('ln -sf %s %s' % (latest_package, latest))
     force_link(latest_package, latest)
 
     # Remove old files
@@ -255,9 +255,9 @@ opts = [
     Option('-o', '--org', help = 'GitHub organization'),
     Option('-G', '--group', default = 'www-data',
            help = 'The system group to use when publishing files'),
-    Option('-p', '--fperms', default = 0644, type = 'int',
+    Option('-p', '--fperms', default = 0o644, type = 'int',
            help = 'The file permissions to use when publishing files'),
-    Option('-d', '--dperms', default = 0755, type = 'int',
+    Option('-d', '--dperms', default = 0o755, type = 'int',
            help = 'The directory permissions to use when publishing files'),
     Option('--builds-dir', default = './builds',
            help = 'The directory in which to publish builds'),
@@ -292,7 +292,7 @@ class OptParser(OptionParser):
 
     def error(self, msg):
         self.print_help()
-        print '\n\nUsage error: %s' % msg
+        print('\n\nUsage error: %s' % msg)
         sys.exit(1)
 
 
