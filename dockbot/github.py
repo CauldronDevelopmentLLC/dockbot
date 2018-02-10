@@ -309,7 +309,7 @@ def upload_release_asset(opts, path):
     finally:
         if f is not None: f.close()
 
-    print
+    print()
 
 
 def delete_release_asset(opts, path):
@@ -340,7 +340,7 @@ def download_release_asset(opts, pattern):
                     f.write(chunk)
                     progress.update(len(chunk))
 
-        print
+        print()
 
 
 def run():
