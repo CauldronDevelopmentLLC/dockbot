@@ -92,7 +92,9 @@ class Image(object):
         cmd = ['m4'] + sum([['-I', x] for x in libpath], []) + [self.path]
         ret, out, err = dockbot.system(cmd, True)
 
-        if ret: raise dockbot.Error('Failed to construct Docker file: ' + err)
+        if ret:
+            raise dockbot.Error('Failed to construct Docker file: ' +
+                                err.decode('utf-8'))
 
         return out
 
