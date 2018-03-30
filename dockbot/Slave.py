@@ -202,8 +202,9 @@ class Slave(dockbot.Container):
 
         # Environment
         env = {
-            'DOCKBOT_MASTER_HOST': '%(namespace)s-buildmaster' % self.conf,
-            'DOCKBOT_MASTER_PORT': 9989,
+            'DOCKBOT_MASTER_HOST':
+            self.conf.get('ip', '%(namespace)s-buildmaster' % self.conf),
+            'DOCKBOT_MASTER_PORT': self.conf.get('buildbot-port', 9989),
             'SCONS_OPTIONS': '$PWD/scons_options.py',
             }
 
