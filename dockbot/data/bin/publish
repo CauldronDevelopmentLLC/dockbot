@@ -245,28 +245,30 @@ def publish_build(package, slave_name, rev, build):
 default_release_types = 'alpha beta public'
 
 opts = [
-    Option('-f', '--force', help = 'Force overwrite', action = 'store_true'),
-    Option('-b', '--build', help = 'Build mode, release or debug',
+    Option('-f', '--force', help = 'force overwrite', action = 'store_true'),
+    Option('-b', '--build', help = 'build mode, release or debug',
            default = None, dest = 'build_mode', type = 'choice',
            choices = ['release', 'debug']),
-    Option('-t', '--test', help = 'Just print what would be done.',
+    Option('-t', '--test', help = 'print what would be done',
            action = 'store_true'),
-    Option('-v', '--verbose', help = 'Verbose output.', action = 'store_true'),
-    Option('-g', '--github', help = 'Publish to GitHub',
+    Option('-v', '--verbose', help = 'verbose output', action = 'store_true'),
+    Option('-g', '--github', help = 'publish to GitHub',
            metavar = 'USER:TOKEN/PASS'),
-    Option('-o', '--org', help = 'GitHub organization'),
+    Option('-o', '--org', help = 'gitHub organization'),
     Option('-G', '--group', default = 'www-data',
-           help = 'The system group to use when publishing files'),
+           help = 'the system group to use when publishing files'),
     Option('-p', '--fperms', default = 0o644, type = 'int',
-           help = 'The file permissions to use when publishing files'),
+           help = 'the file permissions to use when publishing files'),
     Option('-d', '--dperms', default = 0o755, type = 'int',
-           help = 'The directory permissions to use when publishing files'),
+           help = 'the directory permissions to use when publishing files'),
     Option('--builds-dir', default = './builds',
-           help = 'The directory in which to publish builds'),
+           help = 'the directory in which to publish builds'),
     Option('--releases-dir', default = './releases',
-           help = 'The directory in which to publish releases'),
+           help = 'the directory in which to publish releases'),
     Option('--release-types', default = default_release_types,
-           help = 'Releases are organized in to directories of these types')
+           help = 'releases are organized in to directories of these types'),
+    Option('--not-dated', help = 'don\'t add date in destination directory',
+           action = 'store_false', dest = 'dated', default = True),
 ]
 
 usage = 'Usage: %prog [OPTIONS] [COMMAND] <args>...'
@@ -327,8 +329,9 @@ def run():
             parser.error('Invalid release mode "%s"' % release)
 
         src = options.builds_dir
-        dst = '%s/%s/%s' % (options.releases_dir, time.strftime('%Y%m%d'),
-                            release)
+        dst = options.releases_dir
+        if options.dated: dst += '/' + time.strftime('%Y%m%d')
+        dst += '/' + release
 
         if options.github:
             publish_github(options.github, options.org, dst, project, version)
