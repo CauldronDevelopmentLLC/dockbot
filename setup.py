@@ -22,6 +22,7 @@ setup(
             'dockbot-publish = dockbot.publish:run',
             'github-release = dockbot.github:run',
             ]
-        },
+    },
     install_requires = ['requests'],
-    )
+    zip_safe = False,
+)
