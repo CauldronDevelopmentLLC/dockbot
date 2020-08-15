@@ -139,7 +139,7 @@ def get_latest_release(opts):
 
 
 def list_releases(opts):
-    map(print_release, github_get(opts, releases_url))
+    for release in github_get(opts, releases_url): print_release(release)
 
 
 def get_release(opts):
@@ -182,7 +182,7 @@ def get_release_assets(opts):
 
 
 def list_release_assets(opts):
-    map(print_asset, get_release_assets(opts))
+    for asset in get_release_assets(opts): print_asset(asset)
 
 
 def match_release_assets(opts, name):

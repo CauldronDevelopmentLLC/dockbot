@@ -16,7 +16,7 @@ def find_newest_version(path):
 
     for version in os.listdir(path):
         if re.match(r'v\d+\.\d+', version):
-            versions.append(map(int, version[1:].split('.')))
+            versions.append(tuple(map(int, version[1:].split('.'))))
 
     versions = sorted(versions, reverse = True)
     if len(versions): return '%d.%d' % tuple(versions[0])
@@ -131,10 +131,6 @@ class Slave(dockbot.Container):
             if dockbot.args.all and not self.is_running():
                 self.cmd_start()
 
-            if not self.is_running():
-                dockbot.status_line(self.qname, *self.get_status())
-                return
-
         if project != 'all' and project not in self.image.projects:
             raise dockbot.Error('Unknown project %s' % project)
 
@@ -208,7 +204,4 @@ class Slave(dockbot.Container):
             'SCONS_OPTIONS': '$PWD/scons_options.py',
             }
 
-        # Link to buildmaster
-        cmd = ['--link', '%(namespace)s-buildmaster:buildmaster' % self.conf]
-
-        return cmd, env
+        return [], env

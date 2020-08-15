@@ -10,6 +10,7 @@ include(epel.m4)
 
 # Install prerequisites
 YUM(gcc gcc-c++ git scons redhat-lsb make cmake rpm-build binutils-devel
-  valgrind python-twisted openssl-devel openssh-clients file m4 unzip gettext)
+  valgrind python-twisted openssl-devel openssh-clients file m4 unzip gettext
+  nss curl libcurl)
 
 include(buildbot.m4)
