@@ -12,7 +12,7 @@ if 'PWD' not in os.environ: os.environ['PWD'] = os.getcwd()
 if os.path.exists('env.json'):
     import json
     env = json.load(open('env.json', 'r'))
-    for name, value in env.items():
+    for name, value in list(env.items()):
         if value is None:
             if name in os.environ: del os.environ[name]
         else:
@@ -37,13 +37,13 @@ slavename = os.getenv('SLAVE_NAME')
 passwd = os.getenv('SLAVE_PASS')
 keepalive = 600
 usepty = False
-umask = 022
+umask = 0o22
 maxdelay = 300
 
 # Don't leak this into the logs
 del os.environ['SLAVE_PASS']
 
-print 'Slave %s connecting to %s:%d' % (slavename, host, int(port))
+print('Slave %s connecting to %s:%d' % (slavename, host, int(port)))
 
 logFile = logfile.LogFile.fromFullPath('slave.log')
 log.addObserver(log.FileLogObserver(logFile).emit)

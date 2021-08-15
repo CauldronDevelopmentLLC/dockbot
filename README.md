@@ -7,15 +7,15 @@ to source repositories.  The **slaves** perform the builds under different
 configurations.
 
 # Installation
-You can install dockbot with pip as follows:
+Do not use pip to install dockbot. That version is outdated. If you installed an old version via pip, uninstall it:
 
-    pip install dockbot
+    pip uninstall dockbot
 
-Or from GitHub:
+You can install dockbot from GitHub:
 
     git clone https://github.com/CauldronDevelopmentLLC/dockbot
     cd dockbot
-    sudo python setup.py install
+    sudo python3 setup.py install
 
 # Configuring a Dockbot Project
 To use dockbot you need to create a ``dockbot.json`` configuration file in a
