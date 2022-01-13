@@ -1,4 +1,4 @@
-FROM debian:stable
+FROM debian:10.11-slim
 MAINTAINER joseph@cauldrondevelopment.com
 
 # Install prerequisites
