@@ -64,7 +64,7 @@ class Dockbot(object):
             raise dockbot.Error('%s\n\nFailed to parse `dockbot.json`' % e)
 
         # Defaults
-        set_default(self.conf, 'ip', '127.0.0.1')
+        set_default(self.conf, 'host', '127.0.0.1')
         set_default(self.conf, 'http-port', 8080)
 
         # Master

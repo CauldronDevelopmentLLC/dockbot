@@ -32,7 +32,7 @@ class RemoteSlave(dockbot.Slave):
             'SLAVE_NAME': self.name,
             'SLAVE_PASS': self.conf['passwd'],
             'DOCKBOT_MASTER_PORT': self.conf['buildbot-port'],
-            'DOCKBOT_MASTER_HOST': self.conf['ip'],
+            'DOCKBOT_MASTER_HOST': self.conf['host'],
             'SCONS_OPTIONS': '$PWD/scons_options.py',
             'PLATFORM': self.image.platform,
             'PATH': ['$PWD/bin', '$PATH'],

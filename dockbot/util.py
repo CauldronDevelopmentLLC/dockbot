@@ -88,7 +88,7 @@ def get_resource(path):
 
 def trigger(name, project, conf):
     url = 'http://%s:%d/builders/%s-%s/force' % (
-        conf['ip'], int(conf['http-port']), name, project)
+        conf['host'], int(conf['http-port']), name, project)
 
     if dockbot.args.verbose: print('triggering', url)
 
