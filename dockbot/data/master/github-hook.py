@@ -62,7 +62,7 @@ def process_change(response, payload, server, port, user, repo, repo_url):
 def add_change(dummy, remote, changei, src = 'git'):
     """Sends changes from the commit to the buildmaster."""
     try:
-        change = changei.next()
+        change = next(changei)
     except StopIteration:
         remote.broker.transport.loseConnection()
         return None

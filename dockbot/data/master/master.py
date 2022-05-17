@@ -92,7 +92,7 @@ class BuilderInfo:
     def addChange(self, change):
         for m in self.change_matches:
             if m.match(change):
-                deps = ','.join(map(lambda x: x.name, self.deps))
+                deps = ','.join([x.name for x in self.deps])
                 log.msg("Change match:%s Category:%s Repo:%s Name:%s " \
                             "Deps:%s" % (
                         m.pattern.pattern, change.category, change.repo,
@@ -163,7 +163,7 @@ class DepScheduler(BaseUpstreamScheduler):
 
 
     def listBuilderNames(self):
-        return map(lambda x: x.name, self.builders)
+        return [x.name for x in self.builders]
 
 
     def getPendingBuildTimes(self):
@@ -176,12 +176,12 @@ class DepScheduler(BaseUpstreamScheduler):
         # Ignore revisions, they cause problems triggering off other repos
         change.revision = None  # Always build latest
 
-        map(lambda x: x.addChange(change), self.builders)
+        for x in self.builders: x.addChange(change)
         self.scheduleBuilders()
 
 
     def scheduleBuilders(self):
-        ready = filter(lambda x: x.is_ready(), self.builders)
+        ready = [x for x in self.builders if x.is_ready()]
         if not len(ready): return False
 
         for builder in ready:
@@ -213,7 +213,7 @@ class DepScheduler(BaseUpstreamScheduler):
 
             if not self.scheduleBuilders():
                 ss = bs.getSourceStamp()
-                map(lambda w: w(ss), self.successWatchers)
+                for w in self.successWatchers: w(ss)
 
         else: bldr.state |= BUILDER_FAILED
 
@@ -246,8 +246,8 @@ def get_slaves_by_type(types):
     if isinstance(types, str): types = types.split()
     types = set(types)
 
-    return filter(lambda slave: types.issubset(c['slave_info'][slave]['types']),
-                  c['slave_info'].keys())
+    return [slave for slave in c['slave_info'].keys()
+      if types.issubset(c['slave_info'][slave]['types'])]
 
 
 def make_change_matches(matches, default_branch):
@@ -293,7 +293,7 @@ def add_builder(project, slave, factory, home_var, branch, category, deps,
     bdeps = []
     for dep in deps:
         dep_name =  '%s-%s' % (slave, dep)
-        if c['builder_info'].has_key(dep_name):
+        if dep_name in c['builder_info']:
             bdeps.append(c['builder_info'][dep_name])
 
     c['builder_info'][name] = BuilderInfo(name, change_matches, bdeps, priority)
@@ -309,8 +309,8 @@ def make_repo_step(name, branch = None, mode = 'update'):
         if branch: url += '/' + branch
 
         kwargs['svnurl'] = url
-        if info.has_key('user'): kwargs['username'] = info['user']
-        if info.has_key('pass'): kwargs['password'] = info['pass']
+        if 'user' in info: kwargs['username'] = info['user']
+        if 'pass' in info: kwargs['password'] = info['pass']
 
         return SVN(**kwargs)
 
@@ -438,7 +438,7 @@ exec(open('local.cfg', 'r').read())
 # Finish up
 add_build_all()
 
-c['schedulers'].append(DepScheduler('quick', c['builder_info'].values(), 0))
+c['schedulers'].append(DepScheduler('quick', list(c['builder_info'].values()), 0))
 
 c['status'].append(
     html.WebStatus(http_port = c['httpPortnum'], allowForce = True))
